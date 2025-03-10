@@ -23,31 +23,40 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photosName.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-
+        
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
-
+        
         configCell(for: imageListCell, with: indexPath)
-
+        
         return imageListCell
     }
 }
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard let image = UIImage(named: photosName[indexPath.row]) else { return }
-        cell.cellPhoto.image = image
+        cell.cellPhoto.image = nil
         
         cell.cellDateLabel.text = dateFormatter.string(from: Date())
-        cell.cellDateLabel.applyGradientToText()
         
         let isLiked = indexPath.row % 2 == 0
         let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         cell.cellLikeButton.setImage(likeImage, for: .normal)
+        
+        cell.cellPhoto.removeGradientLayer()
+        
+        DispatchQueue.global().async {
+            guard let image = UIImage(named: self.photosName[indexPath.row]) else { return }
+            DispatchQueue.main.async {
+                cell.cellPhoto.image = image
+                cell.cellPhoto.addGradientLayer()
+                cell.setNeedsLayout()
+            }
+        }
     }
 }
 
@@ -64,26 +73,3 @@ extension ImagesListViewController: UITableViewDelegate {
         return cellHeight
     }
 }
-
-extension UILabel {
-    func applyGradientToText() {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = self.bounds
-        gradientLayer.colors = [UIColor(red: 255/255, green: 160/255, blue: 122/255, alpha: 1).cgColor, UIColor(red: 255/255, green: 188/255, blue: 156/255, alpha: 1).cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-        gradientLayer.cornerRadius = 5
-        
-        let textLayer = CATextLayer()
-        textLayer.frame = self.bounds
-        textLayer.string = self.text
-        textLayer.fontSize = self.font!.pointSize
-        textLayer.alignmentMode = .center
-        textLayer.foregroundColor = UIColor.white.cgColor
-        
-        self.layer.insertSublayer(gradientLayer, at: 0)
-        self.layer.insertSublayer(textLayer, above: gradientLayer)
-        self.textColor = .clear
-    }
-}
-
