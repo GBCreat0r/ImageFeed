@@ -30,9 +30,7 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
-        
         configCell(for: imageListCell, with: indexPath)
-        
         return imageListCell
     }
 }
@@ -48,7 +46,6 @@ extension ImagesListViewController {
         cell.cellLikeButton.setImage(likeImage, for: .normal)
         
         cell.cellPhoto.removeGradientLayer()
-        
         DispatchQueue.global().async {
             guard let image = UIImage(named: self.photosName[indexPath.row]) else { return }
             DispatchQueue.main.async {
