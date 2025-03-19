@@ -156,6 +156,15 @@
                                     <action selector="didTapBackButton:" destination="EBS-Hv-TIL" eventType="touchUpInside" id="Acs-ai-oqk"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3D6-hC-Z2X" userLabel="LikeButton">
+                                <rect key="frame" x="68" y="794.5" width="51" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="51" id="ddG-0c-QRB"/>
+                                    <constraint firstAttribute="height" constant="51" id="kay-VY-Skm"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="Сircle"/>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XaX-m7-TZM" userLabel="ShareButton">
                                 <rect key="frame" x="296" y="795" width="50" height="50"/>
                                 <constraints>
@@ -173,6 +182,8 @@
                         <color key="backgroundColor" red="0.1019607843" green="0.1058823529" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="gTI-dc-a1r" firstAttribute="top" secondItem="GLh-35-Ge1" secondAttribute="top" constant="2" id="6of-Yb-w4M"/>
+                            <constraint firstItem="3D6-hC-Z2X" firstAttribute="leading" secondItem="GLh-35-Ge1" secondAttribute="leading" constant="68" id="BWk-PO-bjs"/>
+                            <constraint firstItem="3D6-hC-Z2X" firstAttribute="centerY" secondItem="XaX-m7-TZM" secondAttribute="centerY" id="JD8-FT-1Ok"/>
                             <constraint firstItem="oCB-Bo-twi" firstAttribute="bottom" secondItem="cn7-9m-T9E" secondAttribute="bottom" id="KjN-pI-GKW"/>
                             <constraint firstItem="GLh-35-Ge1" firstAttribute="trailing" secondItem="XaX-m7-TZM" secondAttribute="trailing" constant="68" id="LFA-Yv-ThL"/>
                             <constraint firstItem="gTI-dc-a1r" firstAttribute="leading" secondItem="GLh-35-Ge1" secondAttribute="leading" constant="8" id="VLZ-6A-ANJ"/>
@@ -184,6 +195,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="CaE-PC-n40"/>
                     <connections>
+                        <outlet property="likeButton" destination="3D6-hC-Z2X" id="nee-zd-Qgs"/>
                         <outlet property="scrollView" destination="oCB-Bo-twi" id="qWf-n7-daT"/>
                         <outlet property="shareButton" destination="XaX-m7-TZM" id="J84-FJ-g3S"/>
                         <outlet property="singleImage" destination="hYs-8x-wK6" id="vf7-oE-e7i"/>
@@ -200,78 +212,10 @@
                     <view key="view" contentMode="scaleToFill" id="1To-rK-l39">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Allochka Le Classic" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ij3-ds-QyD" userLabel="Name Label">
-                                <rect key="frame" x="16" y="158" width="382" height="18"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="bzO-Xb-LLe"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@AllochkaMaybeRusalochka" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Zn-k8-Ckt" userLabel="Nickname Label">
-                                <rect key="frame" x="16" y="184" width="382" height="18"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="Tmr-Uw-eV3"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" red="0.68235294117647061" green="0.68627450980392157" blue="0.70588235294117641" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label, BlackStar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zwx-5a-lOd" userLabel="Description Label">
-                                <rect key="frame" x="16" y="210" width="382" height="18"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="0G4-cR-8uZ"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Photo" translatesAutoresizingMaskIntoConstraints="NO" id="RBg-Cl-gsC">
-                                <rect key="frame" x="16" y="80" width="70" height="70"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="Baa-JD-bbJ"/>
-                                    <constraint firstAttribute="width" constant="70" id="Epj-pA-zWL"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zou-rz-smM" userLabel="Logout Button">
-                                <rect key="frame" x="354" y="93" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="dP6-PY-pKI"/>
-                                    <constraint firstAttribute="height" constant="44" id="sAW-dN-Lh2"/>
-                                </constraints>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="" image="Exit"/>
-                            </button>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="HfA-TI-SZL"/>
                         <color key="backgroundColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <constraints>
-                            <constraint firstItem="zou-rz-smM" firstAttribute="centerY" secondItem="RBg-Cl-gsC" secondAttribute="centerY" id="56h-oF-npT"/>
-                            <constraint firstItem="HfA-TI-SZL" firstAttribute="trailing" secondItem="ij3-ds-QyD" secondAttribute="trailing" constant="16" id="Mlc-61-yfo"/>
-                            <constraint firstItem="HfA-TI-SZL" firstAttribute="trailing" secondItem="3Zn-k8-Ckt" secondAttribute="trailing" constant="16" id="OXV-Xz-36h"/>
-                            <constraint firstItem="zou-rz-smM" firstAttribute="trailing" secondItem="HfA-TI-SZL" secondAttribute="trailing" constant="-16" id="XNh-MY-WfT"/>
-                            <constraint firstItem="HfA-TI-SZL" firstAttribute="trailing" secondItem="zwx-5a-lOd" secondAttribute="trailing" constant="16" id="Ywi-bo-2Gz"/>
-                            <constraint firstItem="RBg-Cl-gsC" firstAttribute="top" secondItem="1To-rK-l39" secondAttribute="top" constant="80" id="bkt-60-5ll"/>
-                            <constraint firstItem="ij3-ds-QyD" firstAttribute="top" secondItem="RBg-Cl-gsC" secondAttribute="bottom" constant="8" id="cGh-ye-H76"/>
-                            <constraint firstItem="RBg-Cl-gsC" firstAttribute="leading" secondItem="HfA-TI-SZL" secondAttribute="leading" constant="16" id="ctB-3z-gwW"/>
-                            <constraint firstItem="ij3-ds-QyD" firstAttribute="leading" secondItem="HfA-TI-SZL" secondAttribute="leading" constant="16" id="eVf-7K-FWi"/>
-                            <constraint firstItem="zwx-5a-lOd" firstAttribute="leading" secondItem="HfA-TI-SZL" secondAttribute="leading" constant="16" id="hZk-SD-S1A"/>
-                            <constraint firstItem="3Zn-k8-Ckt" firstAttribute="leading" secondItem="HfA-TI-SZL" secondAttribute="leading" constant="16" id="hge-2a-TRh"/>
-                            <constraint firstItem="3Zn-k8-Ckt" firstAttribute="top" secondItem="ij3-ds-QyD" secondAttribute="bottom" constant="8" id="iLR-EM-Hhw"/>
-                            <constraint firstItem="zwx-5a-lOd" firstAttribute="top" secondItem="3Zn-k8-Ckt" secondAttribute="bottom" constant="8" id="pU9-Ps-HtE"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="RJh-2O-gXP"/>
-                    <connections>
-                        <outlet property="descriptionLabel" destination="zwx-5a-lOd" id="ZNF-H4-q8H"/>
-                        <outlet property="logoutButton" destination="zou-rz-smM" id="DbF-PG-ogE"/>
-                        <outlet property="nameLabel" destination="ij3-ds-QyD" id="Mgw-1L-e9h"/>
-                        <outlet property="nickLabel" destination="3Zn-k8-Ckt" id="TTg-Aq-9hK"/>
-                        <outlet property="pressLogoutButton" destination="zou-rz-smM" id="Rlf-OE-WbL"/>
-                        <outlet property="profilePhoto" destination="RBg-Cl-gsC" id="nbW-zF-0zB"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lM9-T6-2V3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -281,11 +225,10 @@
     <resources>
         <image name="0" width="1600" height="1059"/>
         <image name="Backward" width="24" height="24"/>
-        <image name="Exit" width="44" height="44"/>
-        <image name="Photo" width="70" height="70"/>
         <image name="Sharing" width="50" height="50"/>
         <image name="like_button_on" width="42" height="42"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="tab_profile_active" width="30" height="30"/>
+        <image name="Сircle" width="51" height="51"/>
     </resources>
 </document>

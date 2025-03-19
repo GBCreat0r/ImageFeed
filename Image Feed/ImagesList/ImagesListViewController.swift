@@ -2,6 +2,8 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
+    private let photosName: [String] = Array(0..<20).map{"\($0)"}
+    
     @IBOutlet private var tableView: UITableView!
     
     private lazy var dateFormatter: DateFormatter = {
@@ -10,8 +12,6 @@ final class ImagesListViewController: UIViewController {
         formatter.dateFormat = "d MMMM yyyy"
         return formatter
     }()
-    
-    private let photosName: [String] = Array(0..<20).map{"\($0)"}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,6 +67,7 @@ extension ImagesListViewController {
             guard let image = UIImage(named: self.photosName[indexPath.row]) else { return }
             DispatchQueue.main.async {
                 cell.cellPhoto.image = image
+                // В прошлом ревью я сделал немного не тот градиент, не могли бы в вы проверить этот. (Всё в папке Service, было расширение к лейблу, сейчас к ImageView)
                 cell.cellPhoto.addGradientLayer()
                 cell.setNeedsLayout()
             }
