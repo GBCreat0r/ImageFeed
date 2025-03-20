@@ -30,6 +30,8 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CDF7370E2D7EEB69006C7E0A /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
+		CDF7371D2D8ABE83006C7E0A /* SingleImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SingleImage; sourceTree = "<group>"; };
+		CDF7371E2D8ABEA2006C7E0A /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,10 +64,12 @@
 		7D9CFA4128DDEE7F00D971A7 /* Image Feed */ = {
 			isa = PBXGroup;
 			children = (
+				CDF7371E2D8ABEA2006C7E0A /* Profile */,
+				CDF7371D2D8ABE83006C7E0A /* SingleImage */,
+				7D9CFA5A28DDF66900D971A7 /* ImagesList */,
 				CDF7370E2D7EEB69006C7E0A /* Service */,
 				7D9CFA4228DDEE7F00D971A7 /* AppDelegate.swift */,
 				7D9CFA4428DDEE7F00D971A7 /* SceneDelegate.swift */,
-				7D9CFA5A28DDF66900D971A7 /* ImagesList */,
 				7D9CFA4B28DDEE8000D971A7 /* Assets.xcassets */,
 				CD2DDF0D2D777D6400273D4E /* Main.storyboard */,
 				7D9CFA4D28DDEE8000D971A7 /* LaunchScreen.storyboard */,
@@ -100,6 +104,8 @@
 			);
 			fileSystemSynchronizedGroups = (
 				CDF7370E2D7EEB69006C7E0A /* Service */,
+				CDF7371D2D8ABE83006C7E0A /* SingleImage */,
+				CDF7371E2D8ABEA2006C7E0A /* Profile */,
 			);
 			name = "Image Feed";
 			productName = "Image Feed";
