@@ -41,12 +41,13 @@ final class ProfileViewController: UIViewController {
         label1.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         
         label2.text = "@AllochkaMaybyRusalochka"
-        label2.textColor = UIColor(red: 0xAE/255.0, green: 0xAF/255.0, blue: 0xB4/255.0, alpha: 1.0)
+        label2.textColor = #colorLiteral(red: 0.6823529412, green: 0.6862745098, blue: 0.7058823529, alpha: 1)
         label2.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         
         label3.text = "Label, BlackStar"
         label3.textColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         label3.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label3.numberOfLines = 0
         
         nameLabel = label1
         nickLabel = label2
@@ -65,8 +66,10 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addButton() {
-        let button = UIButton.systemButton(with: UIImage(named: "Exit")!,target: self, action: #selector(Self.didTapLogoutButton))
-        button.tintColor = .red
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "Exit"), for: .normal)
+        button.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+        
         logoutButton = button
         addSubviews(anyView: button)
     }
@@ -87,12 +90,15 @@ final class ProfileViewController: UIViewController {
             
             nameLabel.topAnchor.constraint(equalTo: profilePhoto.bottomAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: profilePhoto.leadingAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
             nickLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
             nickLabel.leadingAnchor.constraint(equalTo: profilePhoto.leadingAnchor),
+            nickLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
             
             descriptionLabel.topAnchor.constraint(equalTo: nickLabel.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: profilePhoto.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
             
             logoutButton.centerYAnchor.constraint(equalTo: profilePhoto.centerYAnchor),
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),

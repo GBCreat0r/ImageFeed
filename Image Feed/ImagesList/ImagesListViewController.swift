@@ -19,20 +19,17 @@ final class ImagesListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showSingleImageSegueIdentifier {
-            guard
-                let viewController = segue.destination as? SingleImageViewController,
-                let indexPath = sender as? IndexPath
-            else {
-                assertionFailure("Invalid segue destination")
-                return
-            }
-            
-            let image = UIImage(named: photosName[indexPath.row])
-            viewController.image = image
-        } else {
+        guard
+            segue.identifier == showSingleImageSegueIdentifier,
+            let viewController = segue.destination as? SingleImageViewController,
+            let indexPath = sender as? IndexPath
+        else {
             super.prepare(for: segue, sender: sender)
+            return
         }
+        
+        let image = UIImage(named: photosName[indexPath.row])
+        viewController.image = image
     }
 }
 
@@ -67,7 +64,6 @@ extension ImagesListViewController {
             guard let image = UIImage(named: self.photosName[indexPath.row]) else { return }
             DispatchQueue.main.async {
                 cell.cellPhoto.image = image
-                // В прошлом ревью я сделал немного не тот градиент, не могли бы в вы проверить этот. (Всё в папке Service, было расширение к лейблу, сейчас к ImageView)
                 cell.cellPhoto.addGradientLayer()
                 cell.setNeedsLayout()
             }
