@@ -24,11 +24,16 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc
-    func didTapLogoutButton() {}
+    func didTapLogoutButton() {
+        let logoutToken = OAuth2TokenStorage()
+        logoutToken.token = nil
+        performSegue(withIdentifier: "logoutSegue" , sender: nil)
+    }
     
     private func addSubviews(anyView: UIView) {
         anyView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(anyView)
+        
     }
     
     private func addLabels() {
