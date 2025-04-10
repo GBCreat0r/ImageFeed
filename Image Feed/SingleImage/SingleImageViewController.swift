@@ -46,7 +46,6 @@ final class SingleImageViewController: UIViewController {
         present(shareViewController, animated: true, completion: nil)
     }
     
-    
     func rescaleAndCenterImageInScrollView (image: UIImage) {
         view.layoutIfNeeded()
         let visibleRectSize = scrollView.bounds.size

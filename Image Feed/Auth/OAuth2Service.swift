@@ -20,7 +20,8 @@ final class OAuth2Service: OAuth2ServiceProtocol {
         case codeError
     }
     func make0AuthTokenRequest(code: String) -> URLRequest? {
-        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
+        guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")
+        else { return nil }
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -29,7 +30,10 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             URLQueryItem(name: "grant_type", value: "authorization_code")
         ]
         
-        guard let url = urlComponents.url else { return nil }
+        guard let url = urlComponents.url else {
+            print("Error: Failed to create URL")
+            return nil
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         return request
@@ -37,32 +41,45 @@ final class OAuth2Service: OAuth2ServiceProtocol {
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
         guard let request = make0AuthTokenRequest(code: code) else {
-            completion(.failure(NetworkError.codeError))
+            DispatchQueue.main.async {
+                completion(.failure(NetworkError.codeError))
+            }
             return
         }
-        
+
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error {
-                completion(.failure(error))
+            if let error = error {
+                print("Network request failed with error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
                 return
             }
-            
+
             guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
-                completion(.failure(NetworkError.codeError))
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.codeError))
+                }
                 return
             }
-            
-            guard let data else {
-                completion(.failure(NetworkError.codeError))
+
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.codeError))
+                }
                 return
             }
-            
+
             do {
                 let decoder = JSONDecoder()
                 let oauthTokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                completion(.success(oauthTokenResponse))
+                DispatchQueue.main.async {
+                    completion(.success(oauthTokenResponse))
+                }
             } catch {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
         task.resume()

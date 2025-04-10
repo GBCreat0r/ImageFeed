@@ -28,17 +28,15 @@ final class AuthViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewSegueIdentifier {
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else {
-                assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
-                return
-            }
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
+        super.prepare(for: segue, sender: sender)
+        
+        guard segue.identifier == showWebViewSegueIdentifier,
+              let webViewViewController = segue.destination as? WebViewViewController else {
+            assertionFailure("Failed to prepare for \(String(describing: segue.identifier))")
+            return
         }
+        segue.destination.modalPresentationStyle = .fullScreen
+        webViewViewController.delegate = self
     }
 }
 
@@ -48,14 +46,17 @@ extension AuthViewController: WebViewViewControllerDelegate {
     }
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
         vc.dismiss(animated: true)
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            guard let self else {
+                print("Error: AuthViewController deallocated")
+                return
+            }
             switch result {
-            case .success(let oauthTokenResponse):
+            case .success(let oAuthTokenResponse):
                 let token = OAuth2TokenStorage()
-                token.token = oauthTokenResponse.accessToken
-                self.delegate?.didAuthenticate(self)
+                token.token = oAuthTokenResponse.accessToken
+                delegate?.didAuthenticate(self)
                 print("Token saved successfully.")
                 
             case .failure(let error):
