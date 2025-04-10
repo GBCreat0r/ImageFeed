@@ -57,6 +57,12 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             }
 
             guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Server returned status code \(httpResponse.statusCode)")
+                } else {
+                    print("Failed to cast response to HTTPURLResponse")
+                }
+                
                 DispatchQueue.main.async {
                     completion(.failure(NetworkError.codeError))
                 }
@@ -64,6 +70,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             }
 
             guard let data = data else {
+                print("Received no data in response")
                 DispatchQueue.main.async {
                     completion(.failure(NetworkError.codeError))
                 }
@@ -77,6 +84,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
                     completion(.success(oauthTokenResponse))
                 }
             } catch {
+                print("Failed to decode JSON: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
