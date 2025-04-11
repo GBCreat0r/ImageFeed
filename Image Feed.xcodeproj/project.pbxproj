@@ -29,6 +29,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		CD6134062D941F170039AD5D /* Auth */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Auth; sourceTree = "<group>"; };
+		CD61345E2DA52A130039AD5D /* SplashView */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SplashView; sourceTree = "<group>"; };
 		CDF7370E2D7EEB69006C7E0A /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
 		CDF7371D2D8ABE83006C7E0A /* SingleImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SingleImage; sourceTree = "<group>"; };
 		CDF7371E2D8ABEA2006C7E0A /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
@@ -64,6 +66,8 @@
 		7D9CFA4128DDEE7F00D971A7 /* Image Feed */ = {
 			isa = PBXGroup;
 			children = (
+				CD61345E2DA52A130039AD5D /* SplashView */,
+				CD6134062D941F170039AD5D /* Auth */,
 				CDF7371E2D8ABEA2006C7E0A /* Profile */,
 				CDF7371D2D8ABE83006C7E0A /* SingleImage */,
 				7D9CFA5A28DDF66900D971A7 /* ImagesList */,
@@ -103,6 +107,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				CD6134062D941F170039AD5D /* Auth */,
+				CD61345E2DA52A130039AD5D /* SplashView */,
 				CDF7370E2D7EEB69006C7E0A /* Service */,
 				CDF7371D2D8ABE83006C7E0A /* SingleImage */,
 				CDF7371E2D8ABEA2006C7E0A /* Profile */,

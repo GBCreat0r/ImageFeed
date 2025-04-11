@@ -45,7 +45,8 @@ extension UILabel {
         let textLayer = CATextLayer()
         textLayer.frame = self.bounds
         textLayer.string = self.text
-        textLayer.fontSize = self.font!.pointSize
+        guard let font else { return }
+        textLayer.fontSize = self.font.pointSize
         textLayer.alignmentMode = .center
         textLayer.foregroundColor = UIColor.white.cgColor
 
