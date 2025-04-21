@@ -12,11 +12,14 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     private let authenticationSegueIdentifier = "showAuthenticationScreen"
+    private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let token = storage.token {
-            switchToTabBarController()
+            //switchToTabBarController()
+            fetchProfile()
         }
         else {
             performSegue(withIdentifier: authenticationSegueIdentifier, sender: nil)
@@ -57,6 +60,43 @@ extension SplashViewController: AuthViewControllerDelegate {
         DispatchQueue.main.async {
             vc.dismiss(animated: true)
         }
-        switchToTabBarController()
+        fetchProfile()
+    }
+    
+    private func fetchProfile() {
+        guard let token = storage.token
+        else {print("no token value"); return}
+        profileService.fetchProfile(bearer: token) {
+            [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self else {
+                print("Error: self crashed")
+                return
+            }
+            
+            switch result {
+            case .success(let profile):
+                print("успех получения информации профиля")
+                fetchProfileImage(username: profile.username)
+                self.switchToTabBarController()
+            case .failure(let error):
+                print("Fail fetch \(error)")
+            }
+        }
+    }
+    
+    private func fetchProfileImage(username: String) {
+        profileImageService.fetchProfileImageURL(username: username) { result in
+//            guard let self else {
+//                print("photo self crash")
+//                return
+//            }
+            switch result {
+            case .success(let url):
+                print("\(url)")
+            case .failure(let error):
+                print("Fail fetch \(error)")
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -14,6 +15,9 @@ final class ProfileViewController: UIViewController {
     private var nickLabel: UILabel?
     private var descriptionLabel: UILabel?
     private var profilePhoto: UIImageView?
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +25,8 @@ final class ProfileViewController: UIViewController {
         addLabels()
         addButton()
         addConstraints()
+        updateProfile()
+        updateAvatar()
     }
     
     @objc
@@ -30,10 +36,41 @@ final class ProfileViewController: UIViewController {
         performSegue(withIdentifier: "logoutSegue" , sender: nil)
     }
     
+    private func updateAvatar() {
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let profilePhoto,
+            let url = URL(string: profileImageURL)
+        else { print("2"); return }
+        profilePhoto.kf.setImage(with: url,
+                                 placeholder:UIImage(named: "Stub.png"))
+    }
+    
+    
+    private func updateProfile() {
+        guard let profile = profileService.profile,
+              let nameLabel,
+              let nickLabel,
+              let descriptionLabel
+        else { print("Update profile error"); return }
+        
+        nameLabel.text = profile.name
+        nickLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+    
     private func addSubviews(anyView: UIView) {
         anyView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(anyView)
-        
     }
     
     private func addLabels() {

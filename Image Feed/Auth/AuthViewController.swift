@@ -27,6 +27,16 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem?.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
     }
     
+    private func showErrorAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так",
+                                      message: "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок",
+                                      style: .default,
+                                      handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
@@ -47,11 +57,13 @@ extension AuthViewController: WebViewViewControllerDelegate {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
+        UIBlockingProgressHUD.show()
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             guard let self else {
                 print("Error: AuthViewController deallocated")
                 return
             }
+            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success(let oAuthTokenResponse):
                 let token = OAuth2TokenStorage()
@@ -61,6 +73,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 
             case .failure(let error):
                 print("Failed to fetch OAuth token: \(error)")
+                self.showErrorAlert()
             }
         }
     }
