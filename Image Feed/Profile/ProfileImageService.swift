@@ -39,7 +39,7 @@ final class ProfileImageService {
             completion(.failure(NetworkError.codeError))
             return
         }
-        //TODO: у меня не правильная структура для деокдинга
+        
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             guard let self else { return }
             

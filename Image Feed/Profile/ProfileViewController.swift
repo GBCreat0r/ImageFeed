@@ -21,6 +21,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
         addProfilePhoto()
         addLabels()
         addButton()
@@ -31,9 +32,9 @@ final class ProfileViewController: UIViewController {
     
     @objc
     func didTapLogoutButton() {
-        let logoutToken = OAuth2TokenStorage()
-        logoutToken.token = nil
-        performSegue(withIdentifier: "logoutSegue" , sender: nil)
+//        let logoutToken = OAuth2TokenStorage()500
+//        logoutToken.token = nil
+//        performSegue(withIdentifier: "logoutSegue" , sender: nil)
     }
     
     private func updateAvatar() {

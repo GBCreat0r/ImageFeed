@@ -22,6 +22,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
     private enum NetworkError: Error {
         case codeError
     }
+    
     func make0AuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")
         else {
@@ -46,12 +47,23 @@ final class OAuth2Service: OAuth2ServiceProtocol {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                print("Код нового запроса совпадает с кодом текущей задачи")
+                completion(.failure(NetworkError.codeError))
+            }
+        }
+        lastCode = code
+        
         guard let request = make0AuthTokenRequest(code: code) else {
             print("Ошибка сетевого запроса: токен авторизации")
             completion(.failure(NetworkError.codeError))
             return
         }
-
+        
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             switch result {
             case .success(let oauthTokenResponse):

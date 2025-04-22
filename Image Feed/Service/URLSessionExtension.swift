@@ -25,32 +25,31 @@ extension URLSession {
                 completion(result)
             }
         }
-
+        
         let task = dataTask(with: request) { data, response, error in
             if let error {
                 print("Сетевой запрос не выполнен из-за ошибки: \(error.localizedDescription)")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
                 return
             }
-
+            
             guard let response = response as? HTTPURLResponse else {
                 print("Не удалось преобразовать ответ в HTTPURLResponse")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
                 return
             }
-
+            
             guard (200..<300).contains(response.statusCode) else {
                 print("Сервер вернул код \(response.statusCode)")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(response.statusCode)))
                 return
             }
-
+            
             guard let data else {
                 print("Не получено никаких данных")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.codeError))
                 return
             }
-
             fulfillCompletionOnTheMainThread(.success(data))
         }
         return task

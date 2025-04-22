@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QDy-R4-ped">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment version="5120" identifier="iOS"/>
@@ -202,74 +202,23 @@
             </objects>
             <point key="canvasLocation" x="883" y="-135"/>
         </scene>
-        <!--Splash View Controller-->
-        <scene sceneID="G1S-Tm-4Eu">
-            <objects>
-                <viewController id="QDy-R4-ped" userLabel="Splash View Controller" customClass="SplashViewController" customModule="Image_Feed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleAspectFit" id="XQx-Su-t30">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_screen_logo" translatesAutoresizingMaskIntoConstraints="NO" id="z6O-3y-1EZ">
-                                <rect key="frame" x="171" y="405.5" width="72" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="72" id="m5R-IB-ruu"/>
-                                    <constraint firstAttribute="height" constant="75" id="zlv-OI-4cz"/>
-                                </constraints>
-                            </imageView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="Oz7-BM-fBg"/>
-                        <color key="backgroundColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstItem="z6O-3y-1EZ" firstAttribute="centerX" secondItem="XQx-Su-t30" secondAttribute="centerX" id="rEz-6g-sOO"/>
-                            <constraint firstItem="z6O-3y-1EZ" firstAttribute="centerY" secondItem="XQx-Su-t30" secondAttribute="centerY" id="tj9-Tf-CSK"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="ts3-85-dEF"/>
-                    <connections>
-                        <segue destination="YRR-5p-jAR" kind="show" identifier="showAuthenticationScreen" id="sXY-gr-joW"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="W93-b1-vXN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1913.0434782608697" y="963.61607142857133"/>
-        </scene>
-        <!--Profile View Controller-->
-        <scene sceneID="459-AN-faS">
-            <objects>
-                <viewController storyboardIdentifier="ProfileViewController" id="9E6-Bv-qma" customClass="ProfileViewController" customModule="Image_Feed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1To-rK-l39">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="HfA-TI-SZL"/>
-                        <color key="backgroundColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="RJh-2O-gXP"/>
-                    <connections>
-                        <segue destination="QDy-R4-ped" kind="show" identifier="logoutSegue" id="nr7-zM-NfK"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lM9-T6-2V3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="16" y="544"/>
-        </scene>
         <!--Auth View Controller-->
         <scene sceneID="Aft-5u-Cuk">
             <objects>
-                <viewController id="PQF-54-cg8" customClass="AuthViewController" customModule="Image_Feed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AuthViewController" id="PQF-54-cg8" customClass="AuthViewController" customModule="Image_Feed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Uig-dy-5Eu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo_of_Unsplash" translatesAutoresizingMaskIntoConstraints="NO" id="qhL-NH-e5T">
-                                <rect key="frame" x="177" y="413" width="60" height="60"/>
+                                <rect key="frame" x="177" y="418" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="F94-nW-fIT"/>
                                     <constraint firstAttribute="height" constant="60" id="ePd-0Q-e9f"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wfH-DM-fzm">
-                                <rect key="frame" x="16" y="714" width="382" height="48"/>
+                                <rect key="frame" x="16" y="724" width="382" height="48"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="3k7-NV-mLX"/>
@@ -357,7 +306,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="L1v-v8-6TY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="35E-Kt-MEb">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -376,9 +325,7 @@
         <image name="Logo_of_Unsplash" width="60" height="60"/>
         <image name="Sharing" width="50" height="50"/>
         <image name="like_button_on" width="42" height="42"/>
-        <image name="splash_screen_logo" width="73" height="75.5"/>
         <image name="tab_editorial_active" width="30" height="30"/>
-        <image name="tab_profile_active" width="30" height="30"/>
         <image name="Сircle" width="51" height="51"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

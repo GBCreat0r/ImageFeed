@@ -41,7 +41,7 @@ extension UILabel {
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientLayer.cornerRadius = 5
-
+        
         let textLayer = CATextLayer()
         textLayer.frame = self.bounds
         textLayer.string = self.text
@@ -49,7 +49,7 @@ extension UILabel {
         textLayer.fontSize = self.font.pointSize
         textLayer.alignmentMode = .center
         textLayer.foregroundColor = UIColor.white.cgColor
-
+        
         self.layer.insertSublayer(gradientLayer, at: 0)
         self.layer.insertSublayer(textLayer, above: gradientLayer)
         self.textColor = .clear
