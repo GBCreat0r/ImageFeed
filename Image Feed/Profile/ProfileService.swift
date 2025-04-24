@@ -60,11 +60,19 @@ final class ProfileService {
             
             switch result {
             case .success(let profileResult):
+                guard let username = profileResult.username,
+                      let firstname = profileResult.firstName,
+                      let lastname = profileResult.lastName,
+                      let bio = profileResult.bio
+                else {
+                    print("Ошибка получения данных профиля")
+                    return
+                }
                 let profile = Profile(
-                    username: profileResult.username,
-                    firstName: profileResult.firstName,
-                    lastName: profileResult.lastName,
-                    bio: profileResult.bio
+                    username: username,
+                    firstName: firstname,
+                    lastName: lastname,
+                    bio: bio
                 )
                 self.profile = profile
                 completion(.success(profile))

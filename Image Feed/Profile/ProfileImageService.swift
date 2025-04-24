@@ -52,7 +52,11 @@ final class ProfileImageService {
             
             switch result {
             case .success(let userResult):
-                guard let profileImageURL = userResult.profileImage["large"]
+                guard let image = userResult.profileImage
+                else { print("Ошибка получения структуры")
+                    completion(.failure(NetworkError.decodingError))
+                    return }
+                guard let profileImageURL = image["large"]
                 else {
                     print("Ошибка получения структуры")
                     completion(.failure(NetworkError.decodingError))
@@ -76,7 +80,7 @@ final class ProfileImageService {
 }
 
 struct UserResult: Decodable {
-    let profileImage: [String: String]
+    let profileImage: [String: String]?
     
     enum CodingKeys: String, CodingKey {
         case profileImage = "profile_image"
