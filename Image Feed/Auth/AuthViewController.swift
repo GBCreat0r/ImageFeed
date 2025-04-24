@@ -15,6 +15,8 @@ final class AuthViewController: UIViewController {
     let showWebViewSegueIdentifier = "showWebView"
     weak var delegate: AuthViewControllerDelegate?
     
+    @IBOutlet weak var enterButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
@@ -27,6 +29,12 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem?.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
     }
     
+    @IBAction func didTapEnterButton(_ sender: Any) {
+        let webViewController = WebViewViewController()
+        webViewController.delegate = self
+        webViewController.modalPresentationStyle = .fullScreen
+        present(webViewController, animated: true)
+    }
     private func showErrorAlert() {
         let alert = UIAlertController(title: "Что-то пошло не так",
                                       message: "Не удалось войти в систему",
@@ -35,18 +43,6 @@ final class AuthViewController: UIViewController {
                                       style: .default,
                                       handler: nil))
         present(alert, animated: true, completion: nil)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        guard segue.identifier == showWebViewSegueIdentifier,
-              let webViewViewController = segue.destination as? WebViewViewController else {
-            assertionFailure("Failed to prepare for \(String(describing: segue.identifier))")
-            return
-        }
-        segue.destination.modalPresentationStyle = .fullScreen
-        webViewViewController.delegate = self
     }
 }
 

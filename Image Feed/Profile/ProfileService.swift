@@ -24,6 +24,7 @@ struct Profile {
 final class ProfileService {
     static let shared = ProfileService()
     private(set) var profile: Profile?
+    private var task: URLSessionTask?
     
     private init() {}
     
@@ -42,6 +43,12 @@ final class ProfileService {
     }
     
     func fetchProfile(bearer token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if task != nil {
+            print("Отмена лишнего запроса")
+            completion(.failure(NetworkError.codeError))
+        }
+        
         guard let request = makeProfileRequest(bearer: token) else {
             print("Ошибка сетевого запроса: запрос профиля")
             completion(.failure(NetworkError.codeError))
@@ -49,7 +56,7 @@ final class ProfileService {
         }
         
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
-            guard let self = self else { return }
+            guard let self else { return }
             
             switch result {
             case .success(let profileResult):
@@ -65,6 +72,7 @@ final class ProfileService {
                 print("Ошибка сетевого запроса: \(error)")
                 completion(.failure(error))
             }
+            self.task = nil
         }
         task.resume()
     }

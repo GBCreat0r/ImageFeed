@@ -5,7 +5,6 @@
         <deployment version="5120" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -236,7 +235,7 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <segue destination="BGV-1i-ida" kind="presentation" identifier="showWebView" id="MZs-pQ-E6V"/>
+                                    <action selector="didTapEnterButton:" destination="PQF-54-cg8" eventType="touchUpInside" id="R4T-V4-nmS"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -251,53 +250,13 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="aFo-Km-gGx"/>
+                    <connections>
+                        <outlet property="enterButton" destination="wfH-DM-fzm" id="cl1-3V-zNG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jqj-F6-2zV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-210" y="1266"/>
-        </scene>
-        <!--Web View View Controller-->
-        <scene sceneID="oov-Cj-l79">
-            <objects>
-                <viewController id="BGV-1i-ida" customClass="WebViewViewController" customModule="Image_Feed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8Ht-zu-pdx">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bv5-Ba-ICT">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <wkWebViewConfiguration key="configuration">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                            </wkWebView>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Yyu-xZ-y2C">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="4"/>
-                                <color key="progressTintColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </progressView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="KxP-cj-oHA"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="Yyu-xZ-y2C" firstAttribute="top" secondItem="KxP-cj-oHA" secondAttribute="top" id="13B-Om-xK5"/>
-                            <constraint firstItem="KxP-cj-oHA" firstAttribute="trailing" secondItem="Yyu-xZ-y2C" secondAttribute="trailing" id="UlW-AF-b6m"/>
-                            <constraint firstAttribute="bottom" secondItem="Bv5-Ba-ICT" secondAttribute="bottom" id="Vbj-FB-7dL"/>
-                            <constraint firstItem="Bv5-Ba-ICT" firstAttribute="top" secondItem="KxP-cj-oHA" secondAttribute="top" id="XHN-d3-uuD"/>
-                            <constraint firstItem="Yyu-xZ-y2C" firstAttribute="leading" secondItem="KxP-cj-oHA" secondAttribute="leading" id="ajO-Gq-Cem"/>
-                            <constraint firstAttribute="trailing" secondItem="Bv5-Ba-ICT" secondAttribute="trailing" id="dmS-LV-kJ8"/>
-                            <constraint firstItem="Bv5-Ba-ICT" firstAttribute="leading" secondItem="8Ht-zu-pdx" secondAttribute="leading" id="txR-fg-qkq"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="Amz-BP-Mhm"/>
-                    <connections>
-                        <outlet property="WebView" destination="Bv5-Ba-ICT" id="oWT-in-kwh"/>
-                        <outlet property="progressView" destination="Yyu-xZ-y2C" id="vSB-35-Dec"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="D7v-fM-hQ1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="554" y="1266"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="rnP-Mb-P5o">
@@ -327,8 +286,5 @@
         <image name="like_button_on" width="42" height="42"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="Сircle" width="51" height="51"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>

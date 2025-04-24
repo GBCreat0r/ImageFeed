@@ -12,6 +12,7 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
     let storageToken = OAuth2TokenStorage()
     private(set) var avatarURL: String?
+    private var task: URLSessionTask?
     
     private enum NetworkError: Error {
         case codeError
@@ -34,6 +35,12 @@ final class ProfileImageService {
     }
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if task != nil {
+            print("Отмена лишнего запроса")
+            completion(.failure(NetworkError.codeError))
+        }
+        
         guard let request = makeProfilePhotoRequest(username: username) else {
             print("Ошибка сетевого запроса: фото профиля")
             completion(.failure(NetworkError.codeError))
@@ -62,6 +69,7 @@ final class ProfileImageService {
                 print("Ошибка сетевого запроса: \(error)")
                 completion(.failure(error))
             }
+            self.task = nil
         }
         task.resume()
     }
