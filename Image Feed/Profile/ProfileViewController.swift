@@ -32,9 +32,13 @@ final class ProfileViewController: UIViewController {
     
     @objc
     func didTapLogoutButton() {
-//        let logoutToken = OAuth2TokenStorage()500
+//        let logoutToken = OAuth2TokenStorage()
 //        logoutToken.token = nil
-//        performSegue(withIdentifier: "logoutSegue" , sender: nil)
+//
+//        let splashViewController = SplashViewController()
+//
+//        splashViewController.modalPresentationStyle = .fullScreen //
+//        present(splashViewController, animated: true, completion: nil)
     }
     
     private func updateAvatar() {
@@ -104,6 +108,8 @@ final class ProfileViewController: UIViewController {
     private func addProfilePhoto() {
         let imageView = UIImageView(image: UIImage(named: "Photo"))
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 35
+        imageView.clipsToBounds = true
         profilePhoto = imageView
         addSubviews(anyView: imageView)
     }

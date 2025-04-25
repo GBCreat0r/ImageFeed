@@ -62,17 +62,17 @@ final class ProfileService {
             case .success(let profileResult):
                 guard let username = profileResult.username,
                       let firstname = profileResult.firstName,
-                      let lastname = profileResult.lastName,
-                      let bio = profileResult.bio
+                      let lastname = profileResult.lastName
                 else {
                     print("Ошибка получения данных профиля")
                     return
                 }
+                let bio = profileResult.bio
                 let profile = Profile(
                     username: username,
                     firstName: firstname,
                     lastName: lastname,
-                    bio: bio
+                    bio: bio ?? ""
                 )
                 self.profile = profile
                 completion(.success(profile))
