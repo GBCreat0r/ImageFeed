@@ -12,10 +12,10 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    let showWebViewSegueIdentifier = "showWebView"
+    private let showWebViewSegueIdentifier = "showWebView"
     weak var delegate: AuthViewControllerDelegate?
     
-    @IBOutlet weak var enterButton: UIButton!
+    @IBOutlet private weak var enterButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,20 +29,11 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem?.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
     }
     
-    @IBAction func didTapEnterButton(_ sender: Any) {
+    @IBAction private func didTapEnterButton(_ sender: Any) {
         let webViewController = WebViewViewController()
         webViewController.delegate = self
         webViewController.modalPresentationStyle = .fullScreen
         present(webViewController, animated: true)
-    }
-    private func showErrorAlert() {
-        let alert = UIAlertController(title: "Что-то пошло не так",
-                                      message: "Не удалось войти в систему",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ок",
-                                      style: .default,
-                                      handler: nil))
-        present(alert, animated: true, completion: nil)
     }
 }
 
@@ -55,11 +46,11 @@ extension AuthViewController: WebViewViewControllerDelegate {
         vc.dismiss(animated: true)
         UIBlockingProgressHUD.show()
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
             guard let self else {
                 print("Error: AuthViewController deallocated")
                 return
             }
-            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success(let oAuthTokenResponse):
                 let token = OAuth2TokenStorage()
@@ -72,5 +63,15 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 self.showErrorAlert()
             }
         }
+    }
+    
+    private func showErrorAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так",
+                                      message: "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок",
+                                      style: .default,
+                                      handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
