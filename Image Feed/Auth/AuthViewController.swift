@@ -12,8 +12,10 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    let showWebViewSegueIdentifier = "showWebView"
+    private let showWebViewSegueIdentifier = "showWebView"
     weak var delegate: AuthViewControllerDelegate?
+    
+    @IBOutlet private weak var enterButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,16 +29,11 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem?.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        guard segue.identifier == showWebViewSegueIdentifier,
-              let webViewViewController = segue.destination as? WebViewViewController else {
-            assertionFailure("Failed to prepare for \(String(describing: segue.identifier))")
-            return
-        }
-        segue.destination.modalPresentationStyle = .fullScreen
-        webViewViewController.delegate = self
+    @IBAction private func didTapEnterButton(_ sender: Any) {
+        let webViewController = WebViewViewController()
+        webViewController.delegate = self
+        webViewController.modalPresentationStyle = .fullScreen
+        present(webViewController, animated: true)
     }
 }
 
@@ -47,7 +44,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
+        UIBlockingProgressHUD.show()
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
             guard let self else {
                 print("Error: AuthViewController deallocated")
                 return
@@ -61,7 +60,18 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 
             case .failure(let error):
                 print("Failed to fetch OAuth token: \(error)")
+                self.showErrorAlert()
             }
         }
+    }
+    
+    private func showErrorAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так",
+                                      message: "Не удалось войти в систему",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок",
+                                      style: .default,
+                                      handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }

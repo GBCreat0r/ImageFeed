@@ -14,14 +14,21 @@ protocol OAuth2ServiceProtocol {
 
 final class OAuth2Service: OAuth2ServiceProtocol {
     static let shared = OAuth2Service()
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
     private init() {}
     
     private enum NetworkError: Error {
         case codeError
     }
+    
     func make0AuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")
-        else { return nil }
+        else {
+            assertionFailure("Failed to created URLComponents")
+            return nil
+        }
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -40,56 +47,39 @@ final class OAuth2Service: OAuth2ServiceProtocol {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
-        guard let request = make0AuthTokenRequest(code: code) else {
-            DispatchQueue.main.async {
+        assert(Thread.isMainThread)
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                print("Код нового запроса совпадает с кодом текущей задачи")
                 completion(.failure(NetworkError.codeError))
             }
+        }
+        lastCode = code
+        
+        guard let request = make0AuthTokenRequest(code: code) else {
+            print("Ошибка сетевого запроса: токен авторизации")
+            completion(.failure(NetworkError.codeError))
             return
         }
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Network request failed with error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-                return
-            }
-
-            guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("Server returned status code \(httpResponse.statusCode)")
-                } else {
-                    print("Failed to cast response to HTTPURLResponse")
-                }
-                
-                DispatchQueue.main.async {
-                    completion(.failure(NetworkError.codeError))
-                }
-                return
-            }
-
-            guard let data = data else {
-                print("Received no data in response")
-                DispatchQueue.main.async {
-                    completion(.failure(NetworkError.codeError))
-                }
-                return
-            }
-
-            do {
-                let decoder = JSONDecoder()
-                let oauthTokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+        
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            switch result {
+            case .success(let oauthTokenResponse):
                 DispatchQueue.main.async {
                     completion(.success(oauthTokenResponse))
+                    self?.task = nil
+                    self?.lastCode = nil
                 }
-            } catch {
-                print("Failed to decode JSON: \(error.localizedDescription)")
+            case .failure(let error):
                 DispatchQueue.main.async {
+                    print("Ошибка сетевого запроса: \(error)")
                     completion(.failure(error))
                 }
             }
         }
+        self.task = task
         task.resume()
     }
 }

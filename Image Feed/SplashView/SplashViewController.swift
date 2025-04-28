@@ -12,14 +12,30 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     private let authenticationSegueIdentifier = "showAuthenticationScreen"
+    private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
+    private let authViewController = AuthViewController()
+    private var imageLogo: UIImageView?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
+        prepareImageLogo()
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let token = storage.token {
-            switchToTabBarController()
+            //switchToTabBarController()
+            fetchProfile()
         }
         else {
-            performSegue(withIdentifier: authenticationSegueIdentifier, sender: nil)
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            let viewController = storyboard.instantiateViewController(identifier: "AuthViewController") as? AuthViewController
+            guard let authViewController = viewController else { return }
+            authViewController.delegate = self
+            authViewController.modalPresentationStyle = .fullScreen
+            self.present(authViewController, animated: true)
         }
     }
     
@@ -35,20 +51,18 @@ final class SplashViewController: UIViewController {
             window.rootViewController = tabBarController
         }
     }
-}
-
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        guard segue.identifier == authenticationSegueIdentifier,
-              let navigationController = segue.destination as? UINavigationController,
-              let viewController = navigationController.viewControllers.first as? AuthViewController else {
-            assertionFailure("Failed to prepare for \(String(describing: segue.identifier))")
-            return
-        }
-        segue.destination.modalPresentationStyle = .fullScreen
-        viewController.delegate = self
+    
+    private func prepareImageLogo() {
+        guard let imageLogo else { return }
+        imageLogo.image = UIImage(named: "splash_screen_logo")
+        imageLogo.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageLogo.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageLogo.widthAnchor.constraint(equalToConstant: 75),
+            imageLogo.heightAnchor.constraint(equalToConstant: 75)
+        ])
+        view.addSubview(imageLogo)
     }
 }
 
@@ -57,6 +71,40 @@ extension SplashViewController: AuthViewControllerDelegate {
         DispatchQueue.main.async {
             vc.dismiss(animated: true)
         }
-        switchToTabBarController()
+        fetchProfile()
+    }
+    
+    private func fetchProfile() {
+        UIBlockingProgressHUD.show()
+        guard let token = storage.token
+        else {print("no token value"); return}
+        profileService.fetchProfile(bearer: token) {
+            [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self else {
+                print("Error: self crashed")
+                return
+            }
+            
+            switch result {
+            case .success(let profile):
+                print("успех получения информации профиля")
+                fetchProfileImage(username: profile.username)
+                self.switchToTabBarController()
+            case .failure(let error):
+                print("Fail fetch \(error)")
+            }
+        }
+    }
+    
+    private func fetchProfileImage(username: String) {
+        profileImageService.fetchProfileImageURL(username: username) { result in
+            switch result {
+            case .success(let url):
+                print("\(url)")
+            case .failure(let error):
+                print("Fail fetch \(error)")
+            }
+        }
     }
 }

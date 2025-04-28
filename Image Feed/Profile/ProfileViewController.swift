@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -14,26 +15,60 @@ final class ProfileViewController: UIViewController {
     private var nickLabel: UILabel?
     private var descriptionLabel: UILabel?
     private var profilePhoto: UIImageView?
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
         addProfilePhoto()
         addLabels()
         addButton()
         addConstraints()
+        updateProfile()
+        updateAvatar()
     }
     
     @objc
-    func didTapLogoutButton() {
-        let logoutToken = OAuth2TokenStorage()
-        logoutToken.token = nil
-        performSegue(withIdentifier: "logoutSegue" , sender: nil)
+    private func didTapLogoutButton() {
+    }
+    
+    private func updateAvatar() {
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let profilePhoto,
+            let url = URL(string: profileImageURL)
+        else { print("2"); return }
+        profilePhoto.kf.setImage(with: url,
+                                 placeholder:UIImage(resource: .stub))
+    }
+    
+    
+    private func updateProfile() {
+        guard let profile = profileService.profile,
+              let nameLabel,
+              let nickLabel,
+              let descriptionLabel
+        else { print("Update profile error"); return }
+        
+        nameLabel.text = profile.name
+        nickLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
     }
     
     private func addSubviews(anyView: UIView) {
         anyView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(anyView)
-        
     }
     
     private func addLabels() {
@@ -66,6 +101,8 @@ final class ProfileViewController: UIViewController {
     private func addProfilePhoto() {
         let imageView = UIImageView(image: UIImage(named: "Photo"))
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 35
+        imageView.clipsToBounds = true
         profilePhoto = imageView
         addSubviews(anyView: imageView)
     }
