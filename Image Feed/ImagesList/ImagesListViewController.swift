@@ -39,7 +39,7 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
             return
         }
-        //TODO: разберись тут
+        //TODO: разберись тут +
         let photo = photos[indexPath.row]
         viewController.imageURL = URL(string: photo.largeImageURL)
     }
