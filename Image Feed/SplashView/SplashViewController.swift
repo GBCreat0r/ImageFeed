@@ -27,12 +27,14 @@ final class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         if let token = storage.token {
             //switchToTabBarController()
+            print("KASHA >>> \(token)")
             fetchProfile()
         }
         else {
+            print("m9CO")
             let storyboard = UIStoryboard(name: "Main", bundle: .main)
             let viewController = storyboard.instantiateViewController(identifier: "AuthViewController") as? AuthViewController
-            guard let authViewController = viewController else { return }
+            guard let authViewController = viewController else { print ("Нет экрана авторизации"); return }
             authViewController.delegate = self
             authViewController.modalPresentationStyle = .fullScreen
             self.present(authViewController, animated: true)

@@ -6,14 +6,17 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
-    var image: UIImage? {
+    var imageURL: URL? {
         didSet {
-            guard isViewLoaded, let image else { return }
-            singleImage.image = image
-            singleImage.frame.size = image.size
-            rescaleAndCenterImageInScrollView(image: image)
+            guard isViewLoaded, let imageURL else { return }
+            
+            loadImage(url: imageURL)
+//            singleImage.image = image
+//            singleImage.frame.size = image.size
+//            rescaleAndCenterImageInScrollView(image: image)
         }
     }
     
@@ -30,10 +33,9 @@ final class SingleImageViewController: UIViewController {
         scrollView.maximumZoomScale = 1.25
         scrollView.bouncesZoom = false
         
-        guard let image else { return }
-        singleImage.image = image
-        singleImage.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
+        if let imageURL = imageURL {
+            loadImage(url: imageURL)
+        }
     }
     
     @IBAction func didTapBackButton(_ sender: Any) {
@@ -46,6 +48,23 @@ final class SingleImageViewController: UIViewController {
         present(shareViewController, animated: true, completion: nil)
     }
     
+    private func loadImage(url: URL) {
+        UIBlockingProgressHUD.show()
+        singleImage.kf.setImage(with: url, placeholder: UIImage(named: "StubPhoto")) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.singleImage.image = imageResult.image
+                self.singleImage.frame.size = imageResult.image.size
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure:
+
+                break
+            }
+        }
+    }
+    
     func rescaleAndCenterImageInScrollView (image: UIImage) {
         view.layoutIfNeeded()
         let visibleRectSize = scrollView.bounds.size
@@ -56,8 +75,9 @@ final class SingleImageViewController: UIViewController {
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         scrollView.contentOffset = currentOffset
-        
         centerImage()
+        
+        //TODO: можно сделать прям на весь
     }
     private func centerImage() {
         let contentSize = scrollView.contentSize

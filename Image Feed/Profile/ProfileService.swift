@@ -42,6 +42,10 @@ final class ProfileService {
         return request
     }
     
+    func clearData() {
+        profile = nil
+    }
+    
     func fetchProfile(bearer token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         assert(Thread.isMainThread)
         if task != nil {
