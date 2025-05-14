@@ -17,14 +17,6 @@ final class ImagesListService {
         case codeError
     }
     
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "d MMMM yyyy"
-
-        return formatter
-    }()
-    
     func clearData() {
         photos.removeAll()
         lastLoadedPage = 1
@@ -44,7 +36,7 @@ final class ImagesListService {
             guard let self else { return }
             
             if let error {
-                print ("Сервис fetchPhotosNextPage: Ошибка - error")
+                print ("Сервис fetchPhotosNextPage: Ошибка - \(error)")
                 return
             }
             
