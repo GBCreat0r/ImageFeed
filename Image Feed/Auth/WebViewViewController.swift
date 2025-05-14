@@ -113,10 +113,9 @@ extension WebViewViewController: WKNavigationDelegate {
             let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let code = urlComponents.queryItems?.first(where: { item in item.name == "code" })?.value
         else {
-            print ("No key value")
+            print ("Сервис WebView: Нет ключа ")
             return decisionHandler(.allow)
         }
-        print(">>>>", code)
         guard let delegate else { print("delegate error"); return }
         delegate.webViewViewController(self, didAuthenticateWithCode: code)
         decisionHandler(.cancel)

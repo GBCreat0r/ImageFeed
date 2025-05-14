@@ -15,10 +15,10 @@ final class ImagesListCell: UITableViewCell {
     
     
     override func prepareForReuse() {
-            super.prepareForReuse()
-            cellPhoto.kf.cancelDownloadTask()
+        super.prepareForReuse()
+        cellPhoto.kf.cancelDownloadTask()
         cellPhoto.image = UIImage(named: "StubPhoto")
-        }
+    }
     
     func setIsLiked(_ isLiked: Bool) {
         isLiked ? cellLikeButton.setImage(UIImage(named: "like_button_on"), for: .normal) : cellLikeButton.setImage(UIImage(named: "like_button_off"), for: .normal)

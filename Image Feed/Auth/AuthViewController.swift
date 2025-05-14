@@ -48,7 +48,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self else {
-                print("Error: AuthViewController deallocated")
+                print("Сервис авторизации: Error: AuthViewController deallocated")
                 return
             }
             switch result {
@@ -56,10 +56,10 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 let token = OAuth2TokenStorage()
                 token.token = oAuthTokenResponse.accessToken
                 delegate?.didAuthenticate(self)
-                print("Token saved successfully.")
+                print("Сервис авторизации: Token saved successfully.")
                 
             case .failure(let error):
-                print("Failed to fetch OAuth token: \(error)")
+                print("Сервис авторизации: Failed to fetch OAuth token: \(error)")
                 self.showErrorAlert()
             }
         }

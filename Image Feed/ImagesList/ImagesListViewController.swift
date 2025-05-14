@@ -3,7 +3,6 @@ import Kingfisher
 
 final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    //private let photosName: [String] = Array(0..<20).map{"\($0)"}
     private let imageListService = ImagesListService()
     private var photos: [Photo] = []
     
@@ -13,6 +12,7 @@ final class ImagesListViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "d MMMM yyyy"
+
         return formatter
     }()
     
@@ -23,11 +23,11 @@ final class ImagesListViewController: UIViewController {
         imageListService.fetchPhotosNextPage ()
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        print("\(photos.count)")
     }
     
     @objc private func didFetchPhotos() {
         updateTableViewAnimated()
+        tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -57,24 +57,17 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
+        
+        imageListCell.layoutIfNeeded()
         imageListCell.delegate = self
         
+        imageListCell.cellPhoto.addPhotoCellGradientLayer()
         let imageURL = URL(string: photos[indexPath.row].thumbImageURL)
         //TODO: gradient
         imageListCell.cellPhoto.kf.setImage(
             with: imageURL,
-            placeholder: UIImage(named: "StubPhoto"),
             completionHandler: { result in
-                switch result {
-                case .success:
-                    if let indexPath = self.tableView.indexPath(for: imageListCell) {
-                        //                                self.tableView.performBatchUpdates({
-                        //                                    self.tableView.reloadRows(at: [indexPath], with: .none)
-                        //                                }, completion: nil)
-                    }
-                case .failure:
-                    break
-                }
+                imageListCell.cellPhoto.removeLoadGradientLayer()
             }
         )
         
@@ -109,14 +102,11 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        cell.cellPhoto.image = nil
-        
-        cell.cellDateLabel.text = dateFormatter.string(from: Date())
+        cell.cellDateLabel.text = photos[indexPath.row].createdAt.map { dateFormatter.string(from: $0) } ?? dateFormatter.string(from: Date())
         
         let isLiked = photos[indexPath.row].isLiked
         let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
         cell.cellLikeButton.setImage(likeImage, for: .normal)
-        
     }
 }
 
@@ -147,12 +137,10 @@ extension ImagesListViewController: ImagesListCellDelegate {
                 cell.setIsLiked(self.photos[indexPath.row].isLiked)
                 UIBlockingProgressHUD.dismiss()
             case .failure(let error):
-                print("Error: \(error)")
+                print("Сервис измениния лайка: ошибка: \(error)")
                 UIBlockingProgressHUD.dismiss()
                 //TODO: Alert
             }
-            
         }
-        
     }
 }

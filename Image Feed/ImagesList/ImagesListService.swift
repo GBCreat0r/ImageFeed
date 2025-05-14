@@ -18,9 +18,9 @@ final class ImagesListService {
     }
     
     func clearData() {
-            photos.removeAll()
-            lastLoadedPage = 1
-        }
+        photos.removeAll()
+        lastLoadedPage = 1
+    }
     
     func fetchPhotosNextPage() {
         if task != nil {
@@ -36,8 +36,7 @@ final class ImagesListService {
             guard let self else { return }
             
             if let error {
-                print ("ошибка")
-                
+                print (error)
                 return
             }
             
@@ -52,7 +51,7 @@ final class ImagesListService {
                     id: photoResult.id,
                     size: CGSize(width: photoResult.width,
                                  height: photoResult.height),
-                    createdAt: photoResult.createdAt.flatMap { DateFormatter().date(from: $0) },
+                    createdAt: photoResult.createdAt.flatMap { ISO8601DateFormatter().date(from: $0) } ?? Date(),
                     welcomeDescription: photoResult.description,
                     thumbImageURL: photoResult.urls.thumb,
                     largeImageURL: photoResult.urls.full,
@@ -64,8 +63,6 @@ final class ImagesListService {
                     self.photos.append(contentsOf: newPhoto)
                     self.lastLoadedPage = page + 1
                     NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
-                    print("cool")
-                    print(self.photos.count)
                 }
             } catch {
                 print("Ошибка декодинга JSON: \(error)")
@@ -76,10 +73,11 @@ final class ImagesListService {
     }
     
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        var components = URLComponents(string: Constants.defaultBaseURL + "/photos/\(photoId)/like")
+        let components = URLComponents(string: Constants.defaultBaseURL + "/photos/\(photoId)/like")
         guard let url = components?.url,
               let token = tokenSrorage.token
         else {
+            print("Сервис измениния лайка: Ошибка запроса")
             completion(.failure(NetworkError.codeError))
             return
         }
@@ -100,13 +98,13 @@ final class ImagesListService {
                         self.photos[index].isLiked.toggle()
                         
                         NotificationCenter.default.post(name: ImagesListService.didChangeNotification,
-                            object: nil,
-                            userInfo: ["photos": self.photos[index]])
+                                                        object: nil,
+                                                        userInfo: ["photos": self.photos[index]])
                     }
-                    
                 }
                 completion(.success(()))
             case .failure(let error):
+                print("Сервис измениния лайка: Не получилось лайкнуть: \(error)")
                 completion(.failure(error))
             }
         }

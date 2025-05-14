@@ -25,17 +25,39 @@ final class ProfileViewController: UIViewController {
         addLabels()
         addButton()
         addConstraints()
+        
         updateProfile()
         updateAvatar()
     }
     
     @objc
     private func didTapLogoutButton() {
-        ProfileLogoutService.shared.logout()
-        
+        DispatchQueue.main.async{
+            let alert = UIAlertController(title: "Пока, пока!",
+                                          message: "Уверены что хотите выйти?",
+                                          preferredStyle: .alert)
+            let actionYes = UIAlertAction(title: "Да",
+                                          style: .default) { (action) in
+                ProfileLogoutService.shared.logout()
+            }
+            
+            let actionNo = UIAlertAction(title: "Нет", style: .default) { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+            alert.addAction(actionYes)
+            alert.addAction(actionNo)
+            
+            self.present(alert, animated: true)
+        }
     }
     
     private func updateAvatar() {
+        self.nameLabel?.addLoadGradientLayer()
+        self.nickLabel?.addLoadGradientLayer()
+        self.descriptionLabel?.addLoadGradientLayer()
+        self.profilePhoto?.addLoadProfileGradientLayer()
+        
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.didChangeNotification,
@@ -49,9 +71,17 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let profilePhoto,
             let url = URL(string: profileImageURL)
-        else { print("2"); return }
+        else {
+            print("Сервис Профиля: Ошибка обновление данных профиля")
+            return
+        }
         profilePhoto.kf.setImage(with: url,
-                                 placeholder:UIImage(resource: .stub))
+                                 placeholder:UIImage(resource: .stub),completionHandler: {_ in
+            self.nameLabel?.removeLoadGradientLayer()
+            self.nickLabel?.removeLoadGradientLayer()
+            self.descriptionLabel?.removeLoadGradientLayer()
+            self.profilePhoto?.removeLoadGradientLayer()
+        })
     }
     
     
@@ -60,7 +90,10 @@ final class ProfileViewController: UIViewController {
               let nameLabel,
               let nickLabel,
               let descriptionLabel
-        else { print("Update profile error"); return }
+        else {
+            print("Сервис Профиля: Ошибка обновление данных профиля")
+            return
+        }
         
         nameLabel.text = profile.name
         nickLabel.text = profile.loginName

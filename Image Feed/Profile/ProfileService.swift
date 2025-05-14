@@ -49,12 +49,12 @@ final class ProfileService {
     func fetchProfile(bearer token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         assert(Thread.isMainThread)
         if task != nil {
-            print("Отмена лишнего запроса")
+            print("Сервис загрузки профиля: Отмена лишнего запроса")
             completion(.failure(NetworkError.codeError))
         }
         
         guard let request = makeProfileRequest(bearer: token) else {
-            print("Ошибка сетевого запроса: запрос профиля")
+            print("Сервис загрузки профиля: Ошибка сетевого запроса: запрос профиля")
             completion(.failure(NetworkError.codeError))
             return
         }
@@ -68,7 +68,7 @@ final class ProfileService {
                       let firstname = profileResult.firstName,
                       let lastname = profileResult.lastName
                 else {
-                    print("Ошибка получения данных профиля")
+                    print("Сервис загрузки профиля: Ошибка получения данных профиля")
                     return
                 }
                 let bio = profileResult.bio
@@ -81,7 +81,7 @@ final class ProfileService {
                 self.profile = profile
                 completion(.success(profile))
             case .failure(let error):
-                print("Ошибка сетевого запроса: \(error)")
+                print("Сервис загрузки профиля: Ошибка сетевого запроса: \(error)")
                 completion(.failure(error))
             }
             self.task = nil

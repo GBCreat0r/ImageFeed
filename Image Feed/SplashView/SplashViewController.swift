@@ -26,12 +26,11 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let token = storage.token {
-            //switchToTabBarController()
-            print("KASHA >>> \(token)")
+            print("Есть ключ авторизации")
             fetchProfile()
         }
         else {
-            print("m9CO")
+            print("Нет ключа авторизации")
             let storyboard = UIStoryboard(name: "Main", bundle: .main)
             let viewController = storyboard.instantiateViewController(identifier: "AuthViewController") as? AuthViewController
             guard let authViewController = viewController else { print ("Нет экрана авторизации"); return }
@@ -79,22 +78,22 @@ extension SplashViewController: AuthViewControllerDelegate {
     private func fetchProfile() {
         UIBlockingProgressHUD.show()
         guard let token = storage.token
-        else {print("no token value"); return}
+        else {print("Сервис fetchProfile: no token value"); return}
         profileService.fetchProfile(bearer: token) {
             [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self else {
-                print("Error: self crashed")
+                print("Сервис fetchProfile: Ошибка: self crashed")
                 return
             }
             
             switch result {
             case .success(let profile):
-                print("успех получения информации профиля")
+                print("Сервис fetchProfile: успех получения информации профиля")
                 fetchProfileImage(username: profile.username)
                 self.switchToTabBarController()
             case .failure(let error):
-                print("Fail fetch \(error)")
+                print("Сервис fetchProfile: Fail fetch \(error)")
             }
         }
     }
@@ -102,10 +101,10 @@ extension SplashViewController: AuthViewControllerDelegate {
     private func fetchProfileImage(username: String) {
         profileImageService.fetchProfileImageURL(username: username) { result in
             switch result {
-            case .success(let url):
-                print("\(url)")
+            case .success:
+                print("Сервис fetchProfileImage: Аватарка получена")
             case .failure(let error):
-                print("Fail fetch \(error)")
+                print("Сервис fetchProfileImage: Fail fetch \(error)")
             }
         }
     }
