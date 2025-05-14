@@ -52,7 +52,7 @@ final class SingleImageViewController: UIViewController {
     
     private func loadImage(url: URL) {
         ProgressHUD.animate()
-        let placeholder = UIImage(named: "StubPhoto")
+        let placeholder = UIImage(resource: .stubPhoto)
         let placeholderImageView = UIImageView(image: placeholder)
         placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
         singleImage.addSubview(placeholderImageView)

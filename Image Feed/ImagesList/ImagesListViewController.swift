@@ -6,8 +6,6 @@ final class ImagesListViewController: UIViewController {
     private let imageListService = ImagesListService()
     private var photos: [Photo] = []
     
-    @IBOutlet private var tableView: UITableView!
-    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
@@ -15,6 +13,8 @@ final class ImagesListViewController: UIViewController {
 
         return formatter
     }()
+    
+    @IBOutlet private var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +39,6 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
             return
         }
-        //TODO: разберись тут +
         let photo = photos[indexPath.row]
         viewController.imageURL = URL(string: photo.largeImageURL)
     }
@@ -49,7 +48,7 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int) -> Int {
-            return photos.count
+            photos.count
         }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -63,7 +62,6 @@ extension ImagesListViewController: UITableViewDataSource {
         
         imageListCell.cellPhoto.addPhotoCellGradientLayer()
         let imageURL = URL(string: photos[indexPath.row].thumbImageURL)
-        //TODO: gradient
         imageListCell.cellPhoto.kf.setImage(
             with: imageURL,
             completionHandler: { result in
@@ -105,7 +103,7 @@ extension ImagesListViewController {
         cell.cellDateLabel.text = photos[indexPath.row].createdAt.map { dateFormatter.string(from: $0) } ?? dateFormatter.string(from: Date())
         
         let isLiked = photos[indexPath.row].isLiked
-        let likeImage = isLiked ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
+        let likeImage = isLiked ? UIImage(resource: .likeButtonOn) : UIImage(resource: .likeButtonOff)
         cell.cellLikeButton.setImage(likeImage, for: .normal)
     }
 }
@@ -130,7 +128,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
         let photo = photos[indexPath.row]
         
         UIBlockingProgressHUD.show()
-        imageListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { result in
+        imageListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success:
                 self.photos = self.imageListService.photos
@@ -139,7 +138,6 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .failure(let error):
                 print("Сервис измениния лайка: ошибка: \(error)")
                 UIBlockingProgressHUD.dismiss()
-                //TODO: Alert
             }
         }
     }

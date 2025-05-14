@@ -55,8 +55,7 @@ final class SplashViewController: UIViewController {
     
     private func prepareImageLogo() {
         guard let imageLogo else { return }
-        imageLogo.image = UIImage(named: "splash_screen_logo")
-        imageLogo.translatesAutoresizingMaskIntoConstraints = false
+        imageLogo.image = UIImage(resource: .splashScreenLogo)
         NSLayoutConstraint.activate([
             imageLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageLogo.centerYAnchor.constraint(equalTo: view.centerYAnchor),

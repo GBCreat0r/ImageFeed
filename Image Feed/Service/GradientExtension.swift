@@ -22,7 +22,6 @@ extension UIImageView {
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
         gradient.cornerRadius = 35
         gradient.masksToBounds = true
-        //animationLayers.append(gradient)
         
         let gradientChangeAnimation = CABasicAnimation(keyPath: "locations")
         gradientChangeAnimation.duration = 1.0
@@ -47,7 +46,6 @@ extension UIImageView {
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
         gradient.cornerRadius = 35
         gradient.masksToBounds = true
-        //animationLayers.append(gradient)
         
         let gradientChangeAnimation = CABasicAnimation(keyPath: "locations")
         gradientChangeAnimation.duration = 1.0
@@ -99,7 +97,6 @@ extension UILabel {
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
         
         gradient.masksToBounds = true
-        //animationLayers.append(gradient)
         
         let gradientChangeAnimation = CABasicAnimation(keyPath: "locations")
         gradientChangeAnimation.duration = 1.0

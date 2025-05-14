@@ -12,10 +12,18 @@ final class ImagesListService {
     private var lastLoadedPage: Int?
     private(set) var photos: [Photo] = []
     private var task: URLSessionDataTask?
-    private var tokenSrorage = OAuth2TokenStorage()
+    private var tokenStorage = OAuth2TokenStorage()
     private enum NetworkError: Error {
         case codeError
     }
+    
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "d MMMM yyyy"
+
+        return formatter
+    }()
     
     func clearData() {
         photos.removeAll()
@@ -36,12 +44,12 @@ final class ImagesListService {
             guard let self else { return }
             
             if let error {
-                print (error)
+                print ("Сервис fetchPhotosNextPage: Ошибка - error")
                 return
             }
             
             guard let data else {
-                print("no data")
+                print("Сервис fetchPhotosNextPage: Нет данных")
                 return
             }
             
@@ -51,7 +59,7 @@ final class ImagesListService {
                     id: photoResult.id,
                     size: CGSize(width: photoResult.width,
                                  height: photoResult.height),
-                    createdAt: photoResult.createdAt.flatMap { ISO8601DateFormatter().date(from: $0) } ?? Date(),
+                    createdAt: photoResult.formattedCreatedAt(),
                     welcomeDescription: photoResult.description,
                     thumbImageURL: photoResult.urls.thumb,
                     largeImageURL: photoResult.urls.full,
@@ -75,7 +83,7 @@ final class ImagesListService {
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         let components = URLComponents(string: Constants.defaultBaseURL + "/photos/\(photoId)/like")
         guard let url = components?.url,
-              let token = tokenSrorage.token
+              let token = tokenStorage.token
         else {
             print("Сервис измениния лайка: Ошибка запроса")
             completion(.failure(NetworkError.codeError))
@@ -83,8 +91,8 @@ final class ImagesListService {
         }
         var request = URLRequest(url: url)
         request.httpMethod = isLike ?
-        Constants.httpMethod.post.rawValue :
-        Constants.httpMethod.delete.rawValue
+        Constants.HttpMethod.post.rawValue :
+        Constants.HttpMethod.delete.rawValue
         
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
@@ -112,7 +120,6 @@ final class ImagesListService {
         task.resume()
     }
     
-    
     private func makeRequest() -> URLRequest? {
         
         var components = URLComponents(string: Constants.defaultBaseURL + "/photos")
@@ -120,10 +127,10 @@ final class ImagesListService {
         components?.queryItems = [
             URLQueryItem(name: "page", value: String(page))]
         guard let url = components?.url,
-              let token = tokenSrorage.token
+              let token = tokenStorage.token
         else { return nil }
         var request = URLRequest(url: url)
-        request.httpMethod = Constants.httpMethod.get.rawValue
+        request.httpMethod = Constants.HttpMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
@@ -148,6 +155,10 @@ struct PhotoResult: Decodable {
     let likedByUser: Bool
     let urls: UrlsResult
     
+    static let dateFormatter: ISO8601DateFormatter = {
+        ISO8601DateFormatter()
+        }()
+    
     enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
@@ -156,6 +167,11 @@ struct PhotoResult: Decodable {
         case description
         case likedByUser = "liked_by_user"
         case urls
+    }
+    
+    func formattedCreatedAt() -> Date? {
+        guard let createdAt = createdAt else { return nil }
+        return PhotoResult.dateFormatter.date(from: createdAt)
     }
 }
 

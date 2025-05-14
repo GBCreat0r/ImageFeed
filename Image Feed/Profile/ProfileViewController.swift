@@ -53,10 +53,10 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateAvatar() {
-        self.nameLabel?.addLoadGradientLayer()
-        self.nickLabel?.addLoadGradientLayer()
-        self.descriptionLabel?.addLoadGradientLayer()
-        self.profilePhoto?.addLoadProfileGradientLayer()
+        nameLabel?.addLoadGradientLayer()
+        nickLabel?.addLoadGradientLayer()
+        descriptionLabel?.addLoadGradientLayer()
+        profilePhoto?.addLoadProfileGradientLayer()
         
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
@@ -133,7 +133,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addProfilePhoto() {
-        let imageView = UIImageView(image: UIImage(named: "Photo"))
+        let imageView = UIImageView(image: UIImage(resource: .photo))
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 35
         imageView.clipsToBounds = true
@@ -143,7 +143,7 @@ final class ProfileViewController: UIViewController {
     
     private func addButton() {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "Exit"), for: .normal)
+        button.setImage(UIImage(resource: .exit), for: .normal)
         button.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         
         logoutButton = button

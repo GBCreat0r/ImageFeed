@@ -66,7 +66,7 @@ final class WebViewViewController: UIViewController {
     private func setupBackButton() {
         backButton = UIButton(type: .system)
         backButton.translatesAutoresizingMaskIntoConstraints = false
-        backButton.setImage(UIImage(named: "backbutton"), for: .normal)
+        backButton.setImage(UIImage(resource: .backbutton), for: .normal)
         backButton.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         view.addSubview(backButton)
