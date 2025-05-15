@@ -37,12 +37,12 @@ final class ProfileImageService {
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         if task != nil {
-            print("Отмена лишнего запроса")
+            print("Сервис загрузки аватарки: Отмена лишнего запроса")
             completion(.failure(NetworkError.codeError))
         }
         
         guard let request = makeProfilePhotoRequest(username: username) else {
-            print("Ошибка сетевого запроса: фото профиля")
+            print("Сервис загрузки аватарки: Ошибка сетевого запроса: фото профиля")
             completion(.failure(NetworkError.codeError))
             return
         }
@@ -53,12 +53,12 @@ final class ProfileImageService {
             switch result {
             case .success(let userResult):
                 guard let image = userResult.profileImage
-                else { print("Ошибка получения структуры")
+                else { print("Сервис загрузки аватарки: Ошибка получения структуры")
                     completion(.failure(NetworkError.decodingError))
                     return }
                 guard let profileImageURL = image["large"]
                 else {
-                    print("Ошибка получения структуры")
+                    print("Сервис загрузки аватарки: Ошибка получения структуры")
                     completion(.failure(NetworkError.decodingError))
                     return
                 }
@@ -70,7 +70,7 @@ final class ProfileImageService {
                     object: self,
                     userInfo: ["URL": profileImageURL])
             case .failure(let error):
-                print("Ошибка сетевого запроса: \(error)")
+                print("Сервис загрузки аватарки: Ошибка сетевого запроса: \(error)")
                 completion(.failure(error))
             }
             self.task = nil

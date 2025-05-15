@@ -6,14 +6,15 @@
 //
 
 import UIKit
+import Kingfisher
+import ProgressHUD
 
 final class SingleImageViewController: UIViewController {
-    var image: UIImage? {
+    var imageURL: URL? {
         didSet {
-            guard isViewLoaded, let image else { return }
-            singleImage.image = image
-            singleImage.frame.size = image.size
-            rescaleAndCenterImageInScrollView(image: image)
+            guard isViewLoaded, let imageURL else { return }
+            
+            loadImage(url: imageURL)
         }
     }
     
@@ -29,11 +30,14 @@ final class SingleImageViewController: UIViewController {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         scrollView.bouncesZoom = false
-        
-        guard let image else { return }
-        singleImage.image = image
-        singleImage.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
+        if let imageURL = imageURL {
+            loadImage(url: imageURL)
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        ProgressHUD.dismiss()
     }
     
     @IBAction func didTapBackButton(_ sender: Any) {
@@ -46,6 +50,44 @@ final class SingleImageViewController: UIViewController {
         present(shareViewController, animated: true, completion: nil)
     }
     
+    private func loadImage(url: URL) {
+        ProgressHUD.animate()
+        let placeholder = UIImage(resource: .stubPhoto)
+        let placeholderImageView = UIImageView(image: placeholder)
+        placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
+        singleImage.addSubview(placeholderImageView)
+        NSLayoutConstraint.activate([
+            placeholderImageView.centerXAnchor.constraint(equalTo: singleImage.centerXAnchor),
+            placeholderImageView.centerYAnchor.constraint(equalTo: singleImage.centerYAnchor),
+        ])
+        
+        singleImage.kf.setImage(with: url) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.singleImage.image = imageResult.image
+                self.singleImage.frame.size = imageResult.image.size
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+                ProgressHUD.dismiss()
+            case .failure:
+                print("Сервис SingleImage: Не удалось загрузить фото")
+                DispatchQueue.main.async{
+                    let alert = UIAlertController(title: "Ошибка",
+                                                  message: "Не удалось загрузить изображение",
+                                                  preferredStyle: .alert)
+                    let action = UIAlertAction(title: "ОК",
+                                               style: .default) { [weak self] (action) in
+                        guard let self else { return }
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+    
     func rescaleAndCenterImageInScrollView (image: UIImage) {
         view.layoutIfNeeded()
         let visibleRectSize = scrollView.bounds.size
@@ -56,8 +98,9 @@ final class SingleImageViewController: UIViewController {
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
         scrollView.contentOffset = currentOffset
-        
         centerImage()
+        
+        //TODO: можно сделать прям на весь
     }
     private func centerImage() {
         let contentSize = scrollView.contentSize

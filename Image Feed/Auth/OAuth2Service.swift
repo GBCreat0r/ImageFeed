@@ -38,7 +38,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
         ]
         
         guard let url = urlComponents.url else {
-            print("Error: Failed to create URL")
+            print("Сервис авторизации: ОШибка создания URL")
             return nil
         }
         var request = URLRequest(url: url)
@@ -52,14 +52,14 @@ final class OAuth2Service: OAuth2ServiceProtocol {
             if lastCode != code {
                 task?.cancel()
             } else {
-                print("Код нового запроса совпадает с кодом текущей задачи")
+                print("Сервис авторизации: Код нового запроса совпадает с кодом текущей задачи")
                 completion(.failure(NetworkError.codeError))
             }
         }
         lastCode = code
         
         guard let request = make0AuthTokenRequest(code: code) else {
-            print("Ошибка сетевого запроса: токен авторизации")
+            print("Сервис авторизации: Ошибка сетевого запроса: токен авторизации")
             completion(.failure(NetworkError.codeError))
             return
         }
@@ -74,7 +74,7 @@ final class OAuth2Service: OAuth2ServiceProtocol {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    print("Ошибка сетевого запроса: \(error)")
+                    print("Сервис авторизации: Ошибка сетевого запроса: \(error)")
                     completion(.failure(error))
                 }
             }

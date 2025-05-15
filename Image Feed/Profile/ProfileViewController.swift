@@ -18,7 +18,6 @@ final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
@@ -26,15 +25,39 @@ final class ProfileViewController: UIViewController {
         addLabels()
         addButton()
         addConstraints()
+        
         updateProfile()
         updateAvatar()
     }
     
     @objc
     private func didTapLogoutButton() {
+        DispatchQueue.main.async{
+            let alert = UIAlertController(title: "Пока, пока!",
+                                          message: "Уверены что хотите выйти?",
+                                          preferredStyle: .alert)
+            let actionYes = UIAlertAction(title: "Да",
+                                          style: .default) { (action) in
+                ProfileLogoutService.shared.logout()
+            }
+            
+            let actionNo = UIAlertAction(title: "Нет", style: .default) { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+            alert.addAction(actionYes)
+            alert.addAction(actionNo)
+            
+            self.present(alert, animated: true)
+        }
     }
     
     private func updateAvatar() {
+        nameLabel?.addLoadGradientLayer()
+        nickLabel?.addLoadGradientLayer()
+        descriptionLabel?.addLoadGradientLayer()
+        profilePhoto?.addLoadProfileGradientLayer()
+        
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.didChangeNotification,
@@ -48,9 +71,17 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let profilePhoto,
             let url = URL(string: profileImageURL)
-        else { print("2"); return }
+        else {
+            print("Сервис Профиля: Ошибка обновление данных профиля")
+            return
+        }
         profilePhoto.kf.setImage(with: url,
-                                 placeholder:UIImage(resource: .stub))
+                                 placeholder:UIImage(resource: .stub),completionHandler: {_ in
+            self.nameLabel?.removeLoadGradientLayer()
+            self.nickLabel?.removeLoadGradientLayer()
+            self.descriptionLabel?.removeLoadGradientLayer()
+            self.profilePhoto?.removeLoadGradientLayer()
+        })
     }
     
     
@@ -59,7 +90,10 @@ final class ProfileViewController: UIViewController {
               let nameLabel,
               let nickLabel,
               let descriptionLabel
-        else { print("Update profile error"); return }
+        else {
+            print("Сервис Профиля: Ошибка обновление данных профиля")
+            return
+        }
         
         nameLabel.text = profile.name
         nickLabel.text = profile.loginName
@@ -99,7 +133,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addProfilePhoto() {
-        let imageView = UIImageView(image: UIImage(named: "Photo"))
+        let imageView = UIImageView(image: UIImage(resource: .photo))
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 35
         imageView.clipsToBounds = true
@@ -109,7 +143,7 @@ final class ProfileViewController: UIViewController {
     
     private func addButton() {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "Exit"), for: .normal)
+        button.setImage(UIImage(resource: .exit), for: .normal)
         button.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         
         logoutButton = button

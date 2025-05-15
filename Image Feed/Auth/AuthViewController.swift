@@ -23,8 +23,8 @@ final class AuthViewController: UIViewController {
     }
     
     private func  configureBackButton() {
-        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
+        navigationController?.navigationBar.backIndicatorImage = UIImage(resource: .navBackButton)
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(resource: .navBackButton)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
     }
@@ -48,7 +48,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self else {
-                print("Error: AuthViewController deallocated")
+                print("Сервис авторизации: Error: AuthViewController deallocated")
                 return
             }
             switch result {
@@ -56,10 +56,10 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 let token = OAuth2TokenStorage()
                 token.token = oAuthTokenResponse.accessToken
                 delegate?.didAuthenticate(self)
-                print("Token saved successfully.")
+                print("Сервис авторизации: Token saved successfully.")
                 
             case .failure(let error):
-                print("Failed to fetch OAuth token: \(error)")
+                print("Сервис авторизации: Failed to fetch OAuth token: \(error)")
                 self.showErrorAlert()
             }
         }
