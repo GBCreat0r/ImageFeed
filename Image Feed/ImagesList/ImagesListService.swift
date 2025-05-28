@@ -73,7 +73,7 @@ final class ImagesListService {
     }
     
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        let components = URLComponents(string: Constants.defaultBaseURL + "/photos/\(photoId)/like")
+        let components = URLComponents(string: Constants.defaultBaseURLString + "/photos/\(photoId)/like")
         guard let url = components?.url,
               let token = tokenStorage.token
         else {
@@ -114,7 +114,7 @@ final class ImagesListService {
     
     private func makeRequest() -> URLRequest? {
         
-        var components = URLComponents(string: Constants.defaultBaseURL + "/photos")
+        var components = URLComponents(string: Constants.defaultBaseURLString + "/photos")
         let page = lastLoadedPage ?? 1
         components?.queryItems = [
             URLQueryItem(name: "page", value: String(page))]
