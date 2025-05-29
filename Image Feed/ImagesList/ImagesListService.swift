@@ -7,7 +7,13 @@
 
 import UIKit
 
-final class ImagesListService {
+protocol ImagesListServiceProtocol {
+    var photos: [Photo] { get }
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     private var lastLoadedPage: Int?
     private(set) var photos: [Photo] = []
@@ -29,6 +35,7 @@ final class ImagesListService {
         }
         
         let page = lastLoadedPage ?? 1
+
         guard let request = makeRequest() else { return }
         
         let task = URLSession.shared.dataTask(with: request) {
@@ -59,7 +66,8 @@ final class ImagesListService {
                 )
                 }
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.photos.append(contentsOf: newPhoto)
                     self.lastLoadedPage = page + 1
                     NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
@@ -88,10 +96,12 @@ final class ImagesListService {
         
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
-        let task = URLSession.shared.data(for: request) { result in
+        let task = URLSession.shared.data(for: request) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success:
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     if let index = self.photos.firstIndex(where: {
                         $0.id == photoId
                     }) {

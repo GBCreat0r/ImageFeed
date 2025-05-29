@@ -16,6 +16,7 @@
 		CD2DDF0E2D777D6400273D4E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD2DDF0D2D777D6400273D4E /* Main.storyboard */; };
 		CD61346F2DAD26180039AD5D /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = CD61346E2DAD26180039AD5D /* ProgressHUD */; };
 		CD61347C2DB421DA0039AD5D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = CD61347B2DB421DA0039AD5D /* Kingfisher */; };
+		CD715EA72DE791AB0045AA68 /* ImagesListViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD715EA62DE791AB0045AA68 /* ImagesListViewPresenter.swift */; };
 		CDDA41532DB66F0500FC1DFA /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = CDDA41522DB66F0500FC1DFA /* SwiftKeychainWrapper */; };
 		CDDA41552DB67AAE00FC1DFA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDA41542DB67AAE00FC1DFA /* TabBarController.swift */; };
 		CDDA418F2DBF91BE00FC1DFA /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDA418E2DBF91BE00FC1DFA /* ImagesListService.swift */; };
@@ -42,6 +43,7 @@
 		7D9CFA4E28DDEE8000D971A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D9CFA5028DDEE8000D971A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD2DDF0C2D777D6400273D4E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CD715EA62DE791AB0045AA68 /* ImagesListViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewPresenter.swift; sourceTree = "<group>"; };
 		CDDA41542DB67AAE00FC1DFA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		CDDA41572DB90CF400FC1DFA /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CDDA418E2DBF91BE00FC1DFA /* ImagesListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListService.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				7D3DFB1328DDF696005A13F3 /* ImagesListCell.swift */,
 				7D3DFB1428DDF696005A13F3 /* ImagesListViewController.swift */,
 				CDDA418E2DBF91BE00FC1DFA /* ImagesListService.swift */,
+				CD715EA62DE791AB0045AA68 /* ImagesListViewPresenter.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				7D9CFA4528DDEE7F00D971A7 /* SceneDelegate.swift in Sources */,
 				7D3DFB1628DDF696005A13F3 /* ImagesListViewController.swift in Sources */,
 				7D3DFB1528DDF696005A13F3 /* ImagesListCell.swift in Sources */,
+				CD715EA72DE791AB0045AA68 /* ImagesListViewPresenter.swift in Sources */,
 				CDDA41552DB67AAE00FC1DFA /* TabBarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
