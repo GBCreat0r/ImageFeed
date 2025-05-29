@@ -26,6 +26,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        logoutButton?.accessibilityIdentifier = "logoutButton"
         view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
         addProfilePhoto()
         addLabels()
@@ -111,13 +112,16 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         
         label1.textColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1)
         label1.font = UIFont.systemFont(ofSize: 23, weight: .bold)
+        label1.text = "1"
         
         label2.textColor = #colorLiteral(red: 0.6823529412, green: 0.6862745098, blue: 0.7058823529, alpha: 1)
         label2.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label2.text = "2"
         
         label3.textColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         label3.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label3.numberOfLines = 0
+        label3.text = "3"
         
         nameLabel = label1
         nickLabel = label2

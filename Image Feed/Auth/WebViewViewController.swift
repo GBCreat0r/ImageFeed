@@ -6,14 +6,13 @@
 //
 
 import UIKit
-import WebKit
+@preconcurrency import WebKit
 
 
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
-
 
 protocol WebViewViewControllerProtocol: AnyObject {
     var presenter: WebViewPresenterProtocol? { get set }
@@ -39,10 +38,13 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         createWebView()
+        setupBackButton()
+        webView.accessibilityIdentifier = "UnsplashWebView"
         presenter?.viewDidLoad()
         
-        setupBackButton()
+
     }
     
     private func addNewKVOObservation() {

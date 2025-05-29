@@ -25,6 +25,12 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if ProcessInfo.processInfo.arguments.contains("--UITests") {
+            storage.token = "test_token_\(UUID().uuidString)" // Уникальный токен для каждого теста
+            switchToTabBarController()
+            return
+        }
+        
         if let token = storage.token {
             print("Есть ключ авторизации")
             fetchProfile()
@@ -49,6 +55,8 @@ final class SplashViewController: UIViewController {
             }
             let tabBarController = UIStoryboard(name: "Main", bundle: .main)
                 .instantiateViewController(withIdentifier: "TabBarViewController")
+            
+            tabBarController.view.accessibilityIdentifier = "MainTabBar"
             window.rootViewController = tabBarController
         }
     }
