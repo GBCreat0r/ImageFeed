@@ -22,6 +22,10 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if ProcessInfo.processInfo.arguments.contains("-UITests") {
+            // Добавляем идентификатор для тестов
+            tableView.accessibilityIdentifier = "ImagesListTableView"
+        }
         
         if presenter == nil {
             let defaultPresenter = ImagesListViewPresenter(
