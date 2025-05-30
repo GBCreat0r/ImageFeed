@@ -20,8 +20,13 @@ struct Profile {
         self.bio = bio
     }
 }
-//TODO: исправь гонки
-final class ProfileService {
+
+protocol ProfileServiceProtocol {
+    var profile: Profile? { get }
+    func fetchProfile(bearer token: String, completion: @escaping (Result<Profile, Error>) -> Void)
+}
+
+final class ProfileService: ProfileServiceProtocol {
     static let shared = ProfileService()
     private(set) var profile: Profile?
     private var task: URLSessionTask?

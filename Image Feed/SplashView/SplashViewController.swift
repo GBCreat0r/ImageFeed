@@ -25,6 +25,19 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if ProcessInfo.processInfo.arguments.contains("-UITesting") {
+            // 1. Отключаем все анимации
+            UIView.setAnimationsEnabled(false)
+            
+            // 2. Форсируем переход если есть токен
+            if let _ = OAuth2TokenStorage().token {
+                DispatchQueue.main.async {
+                    self.presentTabBarImmediately()
+                }
+                return
+            }
+        }
+        
         if let token = storage.token {
             print("Есть ключ авторизации")
             fetchProfile()
@@ -64,6 +77,13 @@ final class SplashViewController: UIViewController {
         ])
         view.addSubview(imageLogo)
     }
+    
+    private func presentTabBarImmediately() {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController")
+            tabBarController.modalPresentationStyle = .fullScreen
+            self.present(tabBarController, animated: false)
+        }
 }
 
 extension SplashViewController: AuthViewControllerDelegate {

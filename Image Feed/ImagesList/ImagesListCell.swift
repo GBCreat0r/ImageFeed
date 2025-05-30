@@ -9,11 +9,11 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var cellLikeButton: UIButton!
     @IBOutlet weak var cellPhoto: UIImageView!
     
-    @IBAction private func pressCellLikeButton(_ sender: Any) {
+    @IBAction func pressCellLikeButton(_ sender: Any) {
         delegate?.imageListDidTapLike(self)
     }
     
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         cellPhoto.kf.cancelDownloadTask()
