@@ -15,7 +15,7 @@ struct Profile {
     
     init(username: String, firstName: String, lastName: String, bio: String) {
         self.username = username
-        self.name = "\(firstName) \(lastName)"
+        self.name = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
         self.loginName = "@\(username)"
         self.bio = bio
     }
@@ -69,19 +69,20 @@ final class ProfileService: ProfileServiceProtocol {
             
             switch result {
             case .success(let profileResult):
-                guard let username = profileResult.username,
-                      let firstname = profileResult.firstName,
-                      let lastname = profileResult.lastName
-                else {
-                    print("Сервис загрузки профиля: Ошибка получения данных профиля")
-                    return
-                }
-                let bio = profileResult.bio
+//                guard let username = profileResult.username,
+//                      let firstname = profileResult.firstName,
+//                      let lastname = profileResult.lastName
+//                else {
+//                    print("Сервис загрузки профиля: Ошибка получения данных профиля")
+//                    return
+//                }
+//                let bio = profileResult.bio
+//                let lastname = profileResult.lastName
                 let profile = Profile(
-                    username: username,
-                    firstName: firstname,
-                    lastName: lastname,
-                    bio: bio ?? ""
+                    username: profileResult.username ?? "",
+                    firstName: profileResult.firstName ?? "",
+                    lastName: profileResult.lastName ?? "",
+                    bio: profileResult.bio ?? ""
                 )
                 self.profile = profile
                 completion(.success(profile))
