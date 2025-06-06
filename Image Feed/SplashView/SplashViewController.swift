@@ -24,23 +24,10 @@ final class SplashViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if ProcessInfo.processInfo.arguments.contains("-UITesting") {
-            // 1. Отключаем все анимации
-            UIView.setAnimationsEnabled(false)
-            
-            // 2. Форсируем переход если есть токен
-            if let _ = OAuth2TokenStorage().token {
-                DispatchQueue.main.async {
-                    self.presentTabBarImmediately()
-                }
-                return
-            }
-        }
         
         if let token = storage.token {
             print("Есть ключ авторизации")
-            fetchProfile()
+            fetchProfile(token)
         }
         else {
             print("Нет ключа авторизации")
@@ -91,12 +78,14 @@ extension SplashViewController: AuthViewControllerDelegate {
         DispatchQueue.main.async {
             vc.dismiss(animated: true)
         }
-        fetchProfile()
+        if let token = storage.token {
+            fetchProfile(token)
+        }
     }
     
-    private func fetchProfile() {
+    private func fetchProfile(_ token: String?) {
         UIBlockingProgressHUD.show()
-        guard let token = storage.token
+        guard let token = token
         else {print("Сервис fetchProfile: no token value"); return}
         profileService.fetchProfile(bearer: token) {
             [weak self] result in

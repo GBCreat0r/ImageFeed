@@ -14,6 +14,7 @@ protocol AuthViewControllerDelegate: AnyObject {
 final class AuthViewController: UIViewController {
     private let showWebViewSegueIdentifier = "showWebView"
     weak var delegate: AuthViewControllerDelegate?
+    private let token = OAuth2TokenStorage()
     
     @IBOutlet private weak var enterButton: UIButton!
     
@@ -57,7 +58,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
             switch result {
             case .success(let oAuthTokenResponse):
-                let token = OAuth2TokenStorage()
                 token.token = oAuthTokenResponse.accessToken
                 delegate?.didAuthenticate(self)
                 print("Сервис авторизации: Token saved successfully.")
