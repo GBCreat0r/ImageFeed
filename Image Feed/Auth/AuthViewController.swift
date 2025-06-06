@@ -14,6 +14,7 @@ protocol AuthViewControllerDelegate: AnyObject {
 final class AuthViewController: UIViewController {
     private let showWebViewSegueIdentifier = "showWebView"
     weak var delegate: AuthViewControllerDelegate?
+    private let token = OAuth2TokenStorage()
     
     @IBOutlet private weak var enterButton: UIButton!
     
@@ -22,7 +23,7 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
-    private func  configureBackButton() {
+    private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(resource: .navBackButton)
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(resource: .navBackButton)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -31,7 +32,11 @@ final class AuthViewController: UIViewController {
     
     @IBAction private func didTapEnterButton(_ sender: Any) {
         let webViewController = WebViewViewController()
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
         webViewController.delegate = self
+        webViewController.presenter = webViewPresenter
+        webViewPresenter.view = webViewController
         webViewController.modalPresentationStyle = .fullScreen
         present(webViewController, animated: true)
     }
@@ -53,7 +58,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
             switch result {
             case .success(let oAuthTokenResponse):
-                let token = OAuth2TokenStorage()
                 token.token = oAuthTokenResponse.accessToken
                 delegate?.didAuthenticate(self)
                 print("Сервис авторизации: Token saved successfully.")
