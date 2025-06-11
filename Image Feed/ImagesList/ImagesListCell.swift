@@ -13,7 +13,6 @@ final class ImagesListCell: UITableViewCell {
         delegate?.imageListDidTapLike(self)
     }
     
-
     override func prepareForReuse() {
         super.prepareForReuse()
         cellPhoto.kf.cancelDownloadTask()
@@ -21,8 +20,7 @@ final class ImagesListCell: UITableViewCell {
     }
     
     func setIsLiked(_ isLiked: Bool) {
- 
-        isLiked ? cellLikeButton.setImage(UIImage(resource: .likeButtonOn), for: .normal) : cellLikeButton.setImage(UIImage(resource: .likeButtonOff), for: .normal)
+        isLiked ? cellLikeButton.setImage(UIImage(resource: .likeButtonOff), for: .normal) : cellLikeButton.setImage(UIImage(resource: .likeButtonOn), for: .normal) 
     }
 }
 

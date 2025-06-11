@@ -29,13 +29,17 @@ final class ImagesListService: ImagesListServiceProtocol {
     }
     
     func fetchPhotosNextPage() {
+        if ProcessInfo.processInfo.arguments.contains("disablePagination") {
+            if !photos.isEmpty { return }
+            if lastLoadedPage != nil && lastLoadedPage! > 1 { return }
+        }
         if task != nil {
             print("Отмена лишнего запроса")
             return
         }
         
         let page = lastLoadedPage ?? 1
-
+        
         guard let request = makeRequest() else { return }
         
         let task = URLSession.shared.dataTask(with: request) {
@@ -66,9 +70,13 @@ final class ImagesListService: ImagesListServiceProtocol {
                 )
                 }
                 
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    self.photos.append(contentsOf: newPhoto)
+                DispatchQueue.main.async {
+                    var uniquePhotos = self.photos
+                    let newPhotoIds = newPhoto.map { $0.id }
+                    uniquePhotos.removeAll { newPhotoIds.contains($0.id) }
+                    uniquePhotos.append(contentsOf: newPhoto)
+                    
+                    self.photos = uniquePhotos
                     self.lastLoadedPage = page + 1
                     NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
                 }
@@ -159,7 +167,7 @@ struct PhotoResult: Decodable {
     
     static let dateFormatter: ISO8601DateFormatter = {
         ISO8601DateFormatter()
-        }()
+    }()
     
     enum CodingKeys: String, CodingKey {
         case id

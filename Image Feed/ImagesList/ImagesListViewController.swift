@@ -22,25 +22,19 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if ProcessInfo.processInfo.arguments.contains("-UITests") {
-            // Добавляем идентификатор для тестов
-            tableView.accessibilityIdentifier = "ImagesListTableView"
-        }
-        
         if presenter == nil {
             let defaultPresenter = ImagesListViewPresenter(
                 imageListService: ImagesListService()
             )
             self.configure(defaultPresenter)
         }
-        
         presenter?.viewDidLoad()
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
     
     func configure(_ presenter: ImagesListViewPresenterProtocol) {
-
+        
         var localPresenter = presenter
         self.presenter = localPresenter
         localPresenter.view = self
@@ -88,6 +82,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
             return
         }
         viewController.imageURL = url
+        viewController.isLiked = photo.isLiked
     }
 }
 

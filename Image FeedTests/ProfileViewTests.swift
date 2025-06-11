@@ -4,6 +4,7 @@
 //
 //  Created by semrumyantsev on 28.05.2025.
 //
+//
 
 import UIKit
 import XCTest
@@ -53,11 +54,19 @@ class ProfileViewPresenterTests: XCTestCase {
     }
     
     func testUpdateProfileSuccess() {
-        let profile = Profile(username: "testUser", firstName: "John", lastName: "Doe", bio: "Test Bio")
+        let profile = Profile(
+            username: "testUser",
+            firstName: "Иван",
+            lastName: "Петров",
+            bio: "Тестовое описание"
+        )
         mockProfileService.profileResult = .success(profile)
         presenter.updateProfile()
         
         XCTAssertTrue(mockView.updateProfileDetailsCalled)
+        XCTAssertEqual(mockView.updatedProfile?.name, "Иван Петров")
+        XCTAssertEqual(mockView.updatedProfile?.loginName, "@testUser")
+        XCTAssertEqual(mockView.updatedProfile?.bio, "Тестовое описание")
     }
     
     func testUpdateProfileFailure() {
@@ -69,7 +78,13 @@ class ProfileViewPresenterTests: XCTestCase {
     
     func testUpdateAvatarSuccess() {
         let avatarURL = "https://example.com/avatar.jpg"
-        mockProfileService.profile = Profile(username: "testUser", firstName: "John", lastName: "Doe", bio: "Test Bio")
+        let profile = Profile(
+            username: "testUser",
+            firstName: "Иван",
+            lastName: "Петров",
+            bio: ""
+        )
+        mockProfileService.profile = profile
         mockProfileImageService.avatarResult = .success(avatarURL)
         presenter.updateAvatar()
         
@@ -77,7 +92,13 @@ class ProfileViewPresenterTests: XCTestCase {
     }
     
     func testUpdateAvatarFailure() {
-        mockProfileService.profile = Profile(username: "testUser", firstName: "John", lastName: "Doe", bio: "Test Bio")
+        let profile = Profile(
+            username: "testUser",
+            firstName: "Иван",
+            lastName: "Петров",
+            bio: ""
+        )
+        mockProfileService.profile = profile
         mockProfileImageService.avatarResult = .failure(NSError(domain: "", code: 404, userInfo: nil))
         presenter.updateAvatar()
         
@@ -97,6 +118,7 @@ class MockProfileViewControllerProtocol: ProfileViewControllerProtocol {
     var updateProfileDetailsCalled = false
     var updateAvatarImageCalled = false
     var showLogoutAlertCalled = false
+    var updatedProfile: Profile?
     
     func showLoading() {
         showLoadingCalled = true
@@ -104,6 +126,7 @@ class MockProfileViewControllerProtocol: ProfileViewControllerProtocol {
     
     func updateProfileDetails(with profile: Profile) {
         updateProfileDetailsCalled = true
+        updatedProfile = profile
     }
     
     func updateAvatarImage(with avatarURL: String) {
@@ -153,4 +176,3 @@ class MockProfileLogoutService: ProfileLogoutServiceProtocol {
         logoutCalled = true
     }
 }
-

@@ -81,7 +81,7 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
     func formattedDate(for photo: Photo) -> String {
         return photo.createdAt.map { dateFormatter.string(from: $0) } ?? dateFormatter.string(from: Date())
     }
-    
+
     func updatePhotos() {
         let oldCount = photos.count
         let newCount = imageListService.photos.count
