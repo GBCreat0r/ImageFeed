@@ -27,7 +27,7 @@ final class Image_FeedUITests: XCTestCase {
         let loginTextField = webView.descendants(matching: .textField).element
         XCTAssertTrue(webView.waitForExistence(timeout: 10))
         loginTextField.tap()
-        loginTextField.typeText("cooleriip2@gmail.com")
+        loginTextField.typeText("MAIL")
         if app.keyboards.element.exists {
             let returnKey = app.keyboards.buttons["Return"]
             if returnKey.exists {
@@ -43,7 +43,7 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
         passwordTextField.tap()
         
-        UIPasteboard.general.string = "123789asdqwe"
+        UIPasteboard.general.string = "Pass"
         passwordTextField.press(forDuration: 1.0)
         
         let pasteMenuItem = app.menuItems["Paste"]
