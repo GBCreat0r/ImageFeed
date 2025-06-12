@@ -9,10 +9,9 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var cellLikeButton: UIButton!
     @IBOutlet weak var cellPhoto: UIImageView!
     
-    @IBAction private func pressCellLikeButton(_ sender: Any) {
+    @IBAction func pressCellLikeButton(_ sender: Any) {
         delegate?.imageListDidTapLike(self)
     }
-    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -21,8 +20,7 @@ final class ImagesListCell: UITableViewCell {
     }
     
     func setIsLiked(_ isLiked: Bool) {
- 
-        isLiked ? cellLikeButton.setImage(UIImage(resource: .likeButtonOn), for: .normal) : cellLikeButton.setImage(UIImage(resource: .likeButtonOff), for: .normal)
+        isLiked ? cellLikeButton.setImage(UIImage(resource: .likeButtonOff), for: .normal) : cellLikeButton.setImage(UIImage(resource: .likeButtonOn), for: .normal) 
     }
 }
 

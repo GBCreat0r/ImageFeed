@@ -17,6 +17,7 @@ final class SingleImageViewController: UIViewController {
             loadImage(url: imageURL)
         }
     }
+    var isLiked: Bool?
     
     private var previousOffset: CGPoint = .zero
     @IBOutlet weak private var likeButton: UIButton!
@@ -26,7 +27,7 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        updateLike()
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         scrollView.bouncesZoom = false
@@ -50,11 +51,18 @@ final class SingleImageViewController: UIViewController {
         present(shareViewController, animated: true, completion: nil)
     }
     
+    private func updateLike() {
+        guard let isLiked else { return }
+        let likePhoto = isLiked ? UIImage(resource: .сircleRed) : UIImage(resource: .сircle)
+        likeButton.setImage(likePhoto, for: .normal)
+    }
+    
     private func loadImage(url: URL) {
         ProgressHUD.animate()
         let placeholder = UIImage(resource: .stubPhoto)
         let placeholderImageView = UIImageView(image: placeholder)
         placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
+        placeholderImageView.tag = 123
         singleImage.addSubview(placeholderImageView)
         NSLayoutConstraint.activate([
             placeholderImageView.centerXAnchor.constraint(equalTo: singleImage.centerXAnchor),
@@ -64,6 +72,11 @@ final class SingleImageViewController: UIViewController {
         singleImage.kf.setImage(with: url) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self else { return }
+            self.singleImage.subviews.forEach { subview in
+                if subview.tag == 123 {
+                    subview.removeFromSuperview()
+                }
+            }
             switch result {
             case .success(let imageResult):
                 self.singleImage.image = imageResult.image

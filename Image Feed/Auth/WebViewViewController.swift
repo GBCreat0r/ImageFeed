@@ -6,15 +6,29 @@
 //
 
 import UIKit
-import WebKit
+@preconcurrency import WebKit
+
 
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
-final class WebViewViewController: UIViewController {
+protocol WebViewViewControllerProtocol: AnyObject {
+    var presenter: WebViewPresenterProtocol? { get set }
+    
+    func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
+}
+
+final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
+    func load(request: URLRequest) {
+        webView.load(request)
+    }
+    
+    var presenter: (any WebViewPresenterProtocol)?
+    
     
     weak var delegate: WebViewViewControllerDelegate?
     private var estimatedProgressObservation: NSKeyValueObservation?
@@ -24,8 +38,13 @@ final class WebViewViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         createWebView()
         setupBackButton()
+        webView.accessibilityIdentifier = "UnsplashWebView"
+        presenter?.viewDidLoad()
+        
+
     }
     
     private func addNewKVOObservation() {
@@ -34,9 +53,20 @@ final class WebViewViewController: UIViewController {
              options: [],
              changeHandler: { [weak self] _, _ in
                  guard let self else { return }
-                 self.updateProgress()
+                 self.presenter?.didUpdateProgressValue(webView.estimatedProgress)
              }
         )
+    }
+    
+    @objc private func backButtonTapped() {
+            dismiss(animated: true, completion: nil)
+        }
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
+    }
+
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
     }
     
     private func createWebView() {
@@ -56,13 +86,8 @@ final class WebViewViewController: UIViewController {
         ])
         
         addNewKVOObservation()
-        
-        if let request = makeRequest() {
-            webView.load(request)
-        }
-        updateProgress()
     }
-    
+
     private func setupBackButton() {
         backButton = UIButton(type: .system)
         backButton.translatesAutoresizingMaskIntoConstraints = false
@@ -78,46 +103,27 @@ final class WebViewViewController: UIViewController {
             backButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
-    
-    @objc private func backButtonTapped() {
-            dismiss(animated: true, completion: nil)
-        }
-    
-    private func updateProgress() {
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
-    }
-    
-    func makeRequest() -> URLRequest? {
-        guard var uRLComponents = URLComponents(string: "https://unsplash.com/oauth/authorize") else { return nil }
-        
-        let queryItems: [URLQueryItem] = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        
-        uRLComponents.queryItems = queryItems
-        guard let url = uRLComponents.url else { return nil }
-        return .init(url: url)
-    }
 }
 
 extension WebViewViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void) {
-        guard
-            let url = navigationAction.request.url,
-            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            let code = urlComponents.queryItems?.first(where: { item in item.name == "code" })?.value
-        else {
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        if let code = code(from: navigationAction) {
+            delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+            decisionHandler(.cancel)
+        } else {
             print ("Сервис WebView: Нет ключа ")
-            return decisionHandler(.allow)
+            decisionHandler(.allow)
         }
-        guard let delegate else { print("delegate error"); return }
-        delegate.webViewViewController(self, didAuthenticateWithCode: code)
-        decisionHandler(.cancel)
+    }
+    
+    private func code(from navigationAction: WKNavigationAction) -> String? {
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
+        }
+        return nil
     }
 }
