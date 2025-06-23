@@ -8,75 +8,67 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewControllerProtocol: AnyObject {
+    func showLoading()
+    func updateProfileDetails(with profile: Profile)
+    func updateAvatarImage(with avatarURL: String)
+    func showLogoutAlert()
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     private var logoutButton: UIButton?
     private var nameLabel: UILabel?
     private var nickLabel: UILabel?
     private var descriptionLabel: UILabel?
     private var profilePhoto: UIImageView?
-    private let profileService = ProfileService.shared
-    private var profileImageServiceObserver: NSObjectProtocol?
+    var presenter: ProfileViewPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        logoutButton?.accessibilityIdentifier = "logoutButton"
         view.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.1058823529, blue: 0.1333333333, alpha: 1)
         addProfilePhoto()
         addLabels()
         addButton()
         addConstraints()
+        self.nameLabel?.accessibilityIdentifier = "nameLabel"
+        self.nickLabel?.accessibilityIdentifier = "nickLabel"
         
-        updateProfile()
-        updateAvatar()
-    }
-    
-    @objc
-    private func didTapLogoutButton() {
-        DispatchQueue.main.async{
-            let alert = UIAlertController(title: "Пока, пока!",
-                                          message: "Уверены что хотите выйти?",
-                                          preferredStyle: .alert)
-            let actionYes = UIAlertAction(title: "Да",
-                                          style: .default) { (action) in
-                ProfileLogoutService.shared.logout()
-            }
-            
-            let actionNo = UIAlertAction(title: "Нет", style: .default) { (action) in
-                alert.dismiss(animated: true, completion: nil)
-            }
-            
-            alert.addAction(actionYes)
-            alert.addAction(actionNo)
-            
-            self.present(alert, animated: true)
+        if presenter == nil {
+            let defaultPresenter = ProfileViewPresenter(
+                profileService: ProfileService.shared,
+                profileImageService: ProfileImageService.shared,
+                profileLogoutService: ProfileLogoutService.shared
+            )
+            self.configure(defaultPresenter)
         }
+        
+        presenter?.viewDidLoad()
     }
     
-    private func updateAvatar() {
+    func configure(_ presenter: ProfileViewPresenterProtocol) {
+        self.presenter = presenter
+        presenter.view = self
+    }
+    
+    func showLoading() {
         nameLabel?.addLoadGradientLayer()
         nickLabel?.addLoadGradientLayer()
         descriptionLabel?.addLoadGradientLayer()
         profilePhoto?.addLoadProfileGradientLayer()
-        
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let profilePhoto,
-            let url = URL(string: profileImageURL)
-        else {
-            print("Сервис Профиля: Ошибка обновление данных профиля")
-            return
-        }
-        profilePhoto.kf.setImage(with: url,
-                                 placeholder:UIImage(resource: .stub),completionHandler: {_ in
+    }
+    
+    func updateProfileDetails(with profile: Profile) {
+        nameLabel?.text = profile.name
+        nickLabel?.text = profile.loginName
+        descriptionLabel?.text = profile.bio
+    }
+    
+    func updateAvatarImage(with avatarURL: String) {
+        guard let profilePhoto = profilePhoto,
+              let url = URL(string: avatarURL) else { return }
+        profilePhoto.kf.setImage(with: url, placeholder: UIImage(resource: .stub), completionHandler: {_ in
             self.nameLabel?.removeLoadGradientLayer()
             self.nickLabel?.removeLoadGradientLayer()
             self.descriptionLabel?.removeLoadGradientLayer()
@@ -84,20 +76,30 @@ final class ProfileViewController: UIViewController {
         })
     }
     
-    
-    private func updateProfile() {
-        guard let profile = profileService.profile,
-              let nameLabel,
-              let nickLabel,
-              let descriptionLabel
-        else {
-            print("Сервис Профиля: Ошибка обновление данных профиля")
-            return
-        }
+    func showLogoutAlert() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
         
-        nameLabel.text = profile.name
-        nickLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
+        let actionYes = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            self?.presenter?.logout()
+        }
+        let actionNo = UIAlertAction(title: "Нет", style: .default)
+        
+        alert.addAction(actionYes)
+        alert.addAction(actionNo)
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        } else {
+            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+        }
+    }
+    
+    @objc func didTapLogoutButton() {
+        presenter?.didTapLogoutButton()
     }
     
     private func addSubviews(anyView: UIView) {
@@ -110,18 +112,18 @@ final class ProfileViewController: UIViewController {
         let label2 = UILabel()
         let label3 = UILabel()
         
-        label1.text = "Allochka le Classic"
         label1.textColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1)
         label1.font = UIFont.systemFont(ofSize: 23, weight: .bold)
+        label1.text = "nameText"
         
-        label2.text = "@AllochkaMaybyRusalochka"
         label2.textColor = #colorLiteral(red: 0.6823529412, green: 0.6862745098, blue: 0.7058823529, alpha: 1)
         label2.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label2.text = "nickText"
         
-        label3.text = "Label, BlackStar"
         label3.textColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         label3.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label3.numberOfLines = 0
+        label3.text = "bioText"
         
         nameLabel = label1
         nickLabel = label2
@@ -151,12 +153,11 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addConstraints() {
-        guard let profilePhoto,
-              let nameLabel,
-              let nickLabel,
-              let descriptionLabel,
-              let logoutButton
-        else { return }
+        guard let profilePhoto = profilePhoto,
+              let nameLabel = nameLabel,
+              let nickLabel = nickLabel,
+              let descriptionLabel = descriptionLabel,
+              let logoutButton = logoutButton else { return }
         
         NSLayoutConstraint.activate([
             profilePhoto.widthAnchor.constraint(equalToConstant: 70),
@@ -183,3 +184,19 @@ final class ProfileViewController: UIViewController {
         ])
     }
 }
+
+#if DEBUG
+extension ProfileViewController {
+    func getNameLabelText() -> String? {
+        return nameLabel?.text
+    }
+    
+    func getNickLabelText() -> String? {
+        return nickLabel?.text
+    }
+    
+    func getDescriptionLabelText() -> String? {
+        return descriptionLabel?.text
+    }
+}
+#endif

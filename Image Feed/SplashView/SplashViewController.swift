@@ -24,10 +24,10 @@ final class SplashViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        
         if let token = storage.token {
             print("Есть ключ авторизации")
-            fetchProfile()
+            fetchProfile(token)
         }
         else {
             print("Нет ключа авторизации")
@@ -64,6 +64,13 @@ final class SplashViewController: UIViewController {
         ])
         view.addSubview(imageLogo)
     }
+    
+    private func presentTabBarImmediately() {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController")
+            tabBarController.modalPresentationStyle = .fullScreen
+            self.present(tabBarController, animated: false)
+        }
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
@@ -71,12 +78,14 @@ extension SplashViewController: AuthViewControllerDelegate {
         DispatchQueue.main.async {
             vc.dismiss(animated: true)
         }
-        fetchProfile()
+        if let token = storage.token {
+            fetchProfile(token)
+        }
     }
     
-    private func fetchProfile() {
+    private func fetchProfile(_ token: String?) {
         UIBlockingProgressHUD.show()
-        guard let token = storage.token
+        guard let token = token
         else {print("Сервис fetchProfile: no token value"); return}
         profileService.fetchProfile(bearer: token) {
             [weak self] result in
